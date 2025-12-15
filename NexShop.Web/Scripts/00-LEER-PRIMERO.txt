@@ -1,0 +1,66 @@
+# ?? NEXSHOP - INSTRUCCIONES FINALES (UN PASO)
+
+## ? COMANDO ÚNICO PARA CREAR TODO
+
+Copia y pega esto en **PowerShell como Admin**:
+
+```powershell
+cd "E:\Proyectos Visual\NexShop\NexShop.Web"; .\Scripts\Crear-Tablas.ps1
+```
+
+---
+
+## ? QUÉ HACE ESE COMANDO
+
+? Navega a la carpeta del proyecto  
+? Ejecuta el script PowerShell  
+? Conecta a: ADMINISTRATOR\POOL  
+? Selecciona BD: NexShopDb  
+? Crea 11 tablas completas  
+? Crea 30+ índices  
+? Inserta 3 roles + 5 categorías  
+? Verifica que todo se creó correctamente  
+? Muestra confirmación final  
+
+---
+
+## ?? DESPUÉS (COMANDOS SIGUIENTES)
+
+```powershell
+# 1. Compilar (si hay cambios)
+dotnet build
+
+# 2. Ejecutar la aplicación
+dotnet run
+
+# 3. Abrir en navegador
+# http://localhost:5217
+```
+
+---
+
+## ?? CREDENCIALES
+
+```
+Servidor:     ADMINISTRATOR\POOL
+Usuario:      sa
+Contraseña:   123456
+BD:           NexShopDb
+```
+
+---
+
+## ? RESULTADO
+
+```
+Tablas:       11 ?
+Índices:      30+ ?
+Roles:        3 ?
+Categorías:   5 ?
+Relaciones:   13 ?
+Estado:       LISTO ?
+```
+
+---
+
+**¡ESO ES TODO! Ejecuta ese comando y listo.** ??

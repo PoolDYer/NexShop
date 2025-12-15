@@ -1,0 +1,74 @@
+# Visual Studio
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+out/
+
+# Entity Framework
+*.db
+*.db-shm
+*.db-wal
+NexShop.Web/Migrations/*.sql
+
+# Dependencies
+.dependencies/
+packages/
+.nuget/
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+~$*
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Node modules
+node_modules/
+package-lock.json
+
+# Environment
+.env
+.env.local
+*.env.user
+
+# Build artifacts
+dist/
+release/
+
+# Test results
+TestResults/
+coverage/
+*.xml
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# ASP.NET Core
+wwwroot/node_modules/
+
+# Rider
+*.sln.iml
+
+# Local uploads
+wwwroot/uploads/

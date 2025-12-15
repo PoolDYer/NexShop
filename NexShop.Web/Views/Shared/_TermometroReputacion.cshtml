@@ -1,0 +1,170 @@
+@model EstadisticasReputacion
+
+<div class="termometro-reputacion card mb-4">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">
+            <i class="bi bi-thermometer-half"></i> Reputación del Vendedor
+        </h5>
+    </div>
+    <div class="card-body">
+        <!-- Encabezado con Índice -->
+        <div class="row align-items-center mb-4">
+            <div class="col-md-4 text-center">
+                <div class="reputacion-badge" style="background: @Model.ColorReputacion;">
+                    <span class="reputacion-indice">@Model.IndiceReputacion%</span>
+                    <p class="reputacion-nivel mb-0">@Model.NivelReputacion</p>
+                    <p class="reputacion-emoji mb-0" style="font-size: 2rem;">@Model.EmojiReputacion</p>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <!-- Barra de Progreso Principal -->
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0">Calificación General</h6>
+                        <span class="badge bg-info">@Model.CalificacionPromedio.ToString("N1")/5.0</span>
+                    </div>
+                    <div class="progress" style="height: 25px; border-radius: 10px;">
+                        <div class="progress-bar" role="progressbar" 
+                             style="width: @((Model.CalificacionPromedio / 5m) * 100)%; background: @Model.ColorReputacion;"
+                             aria-valuenow="@Model.IndiceReputacion" aria-valuemin="0" aria-valuemax="100">
+                            <span class="progress-text">@Model.CalificacionPromedio.ToString("N1")</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estadísticas -->
+                <div class="row text-center">
+                    <div class="col-4">
+                        <strong>@Model.TotalCalificaciones</strong>
+                        <p class="text-muted small mb-0">Total Calificaciones</p>
+                    </div>
+                    <div class="col-4">
+                        <strong style="color: #2ea44f;">@Model.CalificacionesPositivas</strong>
+                        <p class="text-muted small mb-0">Positivas</p>
+                    </div>
+                    <div class="col-4">
+                        <strong style="color: #FF5722;">@Model.CalificacionesNegativas</strong>
+                        <p class="text-muted small mb-0">Negativas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
+        <!-- Desglose de Calificaciones -->
+        <h6 class="mb-3">Desglose por Puntaje</h6>
+
+        @for (int i = 5; i >= 1; i--)
+        {
+            var cantidad = i switch
+            {
+                5 => Model.CalificacionesPositivas,
+                4 => Math.Max(0, (int)(Model.CalificacionesPositivas * 0.8)),
+                3 => Model.CalificacionesNeutras,
+                2 => Math.Max(0, (int)(Model.CalificacionesNegativas * 0.7)),
+                1 => Model.CalificacionesNegativas,
+                _ => 0
+            };
+
+            var porcentaje = Model.TotalCalificaciones > 0 
+                ? (cantidad * 100 / Model.TotalCalificaciones) 
+                : 0;
+
+            var color = i switch
+            {
+                5 => "#4CAF50",     // Verde
+                4 => "#8BC34A",     // Verde claro
+                3 => "#FFC107",     // Amarillo
+                2 => "#FF9800",     // Naranja
+                1 => "#F44336",     // Rojo
+                _ => "#999"
+            };
+
+            <div class="mb-2">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <div>
+                        <span>@(new string('?', i))</span>
+                        <span class="text-muted">(@cantidad)</span>
+                    </div>
+                    <span class="badge">@porcentaje%</span>
+                </div>
+                <div class="progress" style="height: 20px; border-radius: 5px;">
+                    <div class="progress-bar" role="progressbar" 
+                         style="width: @porcentaje%; background: @color;"
+                         aria-valuenow="@porcentaje" aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                </div>
+            </div>
+        }
+
+        <hr />
+
+        <!-- Información Adicional -->
+        <div class="row">
+            <div class="col-md-6">
+                <p class="small mb-2">
+                    <strong>% Positivas:</strong> <span style="color: #2ea44f;">@Model.PorcentajePositivas.ToString("N1")%</span>
+                </p>
+                <p class="small mb-0">
+                    <strong>% Negativas:</strong> <span style="color: #FF5722;">@Model.PorcentajeNegativas.ToString("N1")%</span>
+                </p>
+            </div>
+            <div class="col-md-6">
+                <div class="alert alert-info small mb-0">
+                    <i class="bi bi-info-circle"></i>
+                    La reputación se calcula en base a las calificaciones de compradores verificados.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .termometro-reputacion {
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .reputacion-badge {
+        border-radius: 15px;
+        padding: 20px;
+        color: white;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease;
+    }
+
+    .reputacion-badge:hover {
+        transform: scale(1.05);
+    }
+
+    .reputacion-indice {
+        font-size: 2.5rem;
+        font-weight: bold;
+        display: block;
+    }
+
+    .reputacion-nivel {
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .progress-text {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: white;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+
+    .progress {
+        background-color: #f0f0f0;
+    }
+</style>

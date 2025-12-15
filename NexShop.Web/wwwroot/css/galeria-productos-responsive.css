@@ -1,0 +1,516 @@
+/* ================================================
+   GALERÍA DE PRODUCTOS - RESPONSIVE
+   ================================================ */
+
+/* Contenedor principal de la galería */
+.galeria-producto {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Contenedor del carrusel */
+.carrusel-principal {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    background-color: #f8f9fa;
+}
+
+/* Imagen principal con aspect-ratio */
+.carrusel-imagen {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    background-color: #f5f5f5;
+    /* object-position para centrar imágenes no cuadradas */
+    object-position: center;
+}
+
+/* Slide del carrusel */
+.carousel-item {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: #f5f5f5;
+}
+
+/* Indicadores del carrusel */
+.carousel-indicators {
+    bottom: 1rem;
+    display: flex !important;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.carousel-indicators [data-bs-slide-to] {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.5) !important;
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.carousel-indicators [data-bs-slide-to].active {
+    background-color: #fff !important;
+    border-color: #fff !important;
+    transform: scale(1.2);
+}
+
+/* Controles del carrusel */
+.carousel-control-prev,
+.carousel-control-next {
+    width: auto;
+    height: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0.5rem;
+}
+
+.carousel-control-prev {
+    left: 0.5rem;
+}
+
+.carousel-control-next {
+    right: 0.5rem;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Thumbnails - miniaturas */
+.galeria-thumbnails {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    /* Scroll suave */
+    scroll-behavior: smooth;
+}
+
+.thumbnail-item {
+    flex: 0 0 auto;
+    width: 60px;
+    height: 60px;
+    aspect-ratio: 1 / 1;
+    border-radius: 0.25rem;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    background-color: #f5f5f5;
+}
+
+.thumbnail-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: #f5f5f5;
+}
+
+.thumbnail-item:hover {
+    border-color: #007bff;
+    transform: scale(1.05);
+}
+
+.thumbnail-item.active {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.25);
+}
+
+/* Contenedor sin imágenes */
+.sin-imagenes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
+    background-color: #f5f5f5;
+    border-radius: 0.5rem;
+    flex-direction: column;
+    color: #999;
+}
+
+.sin-imagenes i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: #ccc;
+}
+
+/* ================================================
+   GRID DE PRODUCTOS - RESPONSIVE
+   ================================================ */
+
+/* Contenedor de grid */
+.productos-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+/* Tarjeta de producto */
+.producto-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.producto-card:hover {
+    border-color: #007bff;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Imagen de la tarjeta */
+.producto-imagen {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    position: relative;
+    overflow: hidden;
+    background-color: #f5f5f5;
+}
+
+.producto-card-imagen {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    background-color: #f5f5f5;
+    transition: all 0.3s ease;
+}
+
+/* Efecto hover en imagen */
+.producto-card:hover .producto-card-imagen {
+    transform: scale(1.05);
+}
+
+/* Fallback mejorado para imágenes virtuales */
+.imagen-virtual-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 1.5rem;
+    z-index: 1;
+}
+
+.imagen-virtual-fallback i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+}
+
+.imagen-virtual-fallback .producto-nombre {
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+}
+
+.imagen-virtual-fallback .producto-id {
+    opacity: 0.8;
+    font-size: 0.8rem;
+}
+
+/* Loading state para imágenes */
+.producto-imagen.loading::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    z-index: 2;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Contenido de la tarjeta */
+.producto-card-body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-grow: 1;
+}
+
+.producto-card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+    color: #333;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.producto-card-price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #007bff;
+    margin: 0;
+}
+
+.producto-card-stock {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0;
+}
+
+/* Badge absolutos mejorados */
+.badge-container {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.badge-container-bottom {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    z-index: 10;
+}
+
+/* ================================================
+   RESPONSIVE BREAKPOINTS
+   ================================================ */
+
+/* Tablets - 768px */
+@media (max-width: 768px) {
+    .productos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .galeria-thumbnails {
+        max-width: 100%;
+    }
+
+    .thumbnail-item {
+        width: 50px;
+        height: 50px;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        padding: 0.25rem;
+    }
+
+    .imagen-virtual-fallback {
+        font-size: 0.8rem;
+        padding: 1rem;
+    }
+
+    .imagen-virtual-fallback i {
+        font-size: 1.5rem;
+    }
+}
+
+/* Móvil - 576px */
+@media (max-width: 576px) {
+    .productos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .galeria-thumbnails {
+        gap: 0.25rem;
+    }
+
+    .thumbnail-item {
+        width: 45px;
+        height: 45px;
+    }
+
+    .sin-imagenes i {
+        font-size: 3rem;
+    }
+
+    .producto-card-body {
+        padding: 0.75rem;
+    }
+
+    .producto-card-title {
+        font-size: 0.85rem;
+    }
+
+    .carousel-indicators {
+        bottom: 0.5rem;
+    }
+
+    .carousel-indicators [data-bs-slide-to] {
+        width: 0.5rem;
+        height: 0.5rem;
+    }
+
+    .imagen-virtual-fallback {
+        font-size: 0.7rem;
+        padding: 0.75rem;
+    }
+
+    .imagen-virtual-fallback i {
+        font-size: 1.25rem;
+    }
+}
+
+/* Móvil muy pequeño - 360px */
+@media (max-width: 360px) {
+    .productos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .thumbnail-item {
+        width: 40px;
+        height: 40px;
+    }
+
+    .badge-container {
+        top: 0.25rem;
+        right: 0.25rem;
+    }
+
+    .badge-container-bottom {
+        bottom: 0.25rem;
+        left: 0.25rem;
+    }
+}
+
+/* ================================================
+   MEJORAS DE ACCESIBILIDAD
+   ================================================ */
+
+/* Focus states para navegación */
+.carousel-control-prev-icon:focus,
+.carousel-control-next-icon:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+.producto-card:focus-within {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* Reducir movimiento para usuarios que lo prefieren */
+@media (prefers-reduced-motion: reduce) {
+    .carousel-item,
+    .thumbnail-item,
+    .producto-card,
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon,
+    .producto-card-imagen {
+        transition: none;
+        animation: none;
+    }
+
+    .thumbnail-item:hover {
+        transform: none;
+    }
+
+    .producto-card:hover {
+        transform: none;
+    }
+
+    .producto-card:hover .producto-card-imagen {
+        transform: none;
+    }
+
+    .producto-imagen.loading::before {
+        animation: none;
+    }
+}
+
+/* ================================================
+   MODO OSCURO
+   ================================================ */
+
+@media (prefers-color-scheme: dark) {
+    .carrusel-principal {
+        background-color: #2d2d2d;
+    }
+
+    .carrusel-imagen,
+    .carousel-item img,
+    .producto-card-imagen,
+    .thumbnail-item img,
+    .sin-imagenes {
+        background-color: #3d3d3d;
+    }
+
+    .thumbnail-item {
+        border-color: #555;
+    }
+
+    .thumbnail-item:hover {
+        border-color: #0d6efd;
+    }
+
+    .sin-imagenes {
+        color: #666;
+    }
+
+    .sin-imagenes i {
+        color: #555;
+    }
+
+    .producto-card {
+        border-color: #444;
+        background-color: #2d2d2d;
+    }
+
+    .producto-card-title {
+        color: #e0e0e0;
+    }
+
+    .producto-imagen {
+        background-color: #3d3d3d;
+    }
+
+    .imagen-virtual-fallback {
+        background: linear-gradient(135deg, #4a4a5e 0%, #5a4a6e 100%);
+    }
+
+    .producto-imagen.loading::before {
+        background: linear-gradient(90deg, #3d3d3d 25%, #4d4d4d 50%, #3d3d3d 75%);
+    }
+}

@@ -1,0 +1,438 @@
+@model EstadisticasVendedorViewModel
+@using NexShop.Web.ViewModels
+
+@{
+    ViewData["Title"] = "Estadísticas Detalladas";
+}
+
+<div class="container-lg py-4">
+    <!-- Header -->
+    <div class="row mb-4 align-items-center">
+        <div class="col">
+            <h1 class="mb-0"><i class="bi bi-graph-up"></i> Estadísticas Detalladas</h1>
+            <p class="text-muted">Análisis completo de tu actividad como vendedor</p>
+        </div>
+        <div class="col-auto">
+            <a href="@Url.Action("Dashboard", "Usuarios")" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Métricas Principales (KPIs) -->
+    <div class="row mb-4">
+        <!-- Total de Ventas -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted small mb-1">Total Ventas</p>
+                            <h3 class="mb-0 text-success">$@Model.TotalVentas.ToString("F2")</h3>
+                        </div>
+                        <i class="bi bi-cash-coin text-success" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <small class="text-muted">Ingresos totales</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Órdenes -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted small mb-1">Total Órdenes</p>
+                            <h3 class="mb-0 text-primary">@Model.TotalOrdenes</h3>
+                        </div>
+                        <i class="bi bi-bag-check text-primary" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <small class="text-muted">Compras realizadas</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unidades Vendidas -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted small mb-1">Unidades Vendidas</p>
+                            <h3 class="mb-0 text-info">@Model.TotalUnidadesVendidas</h3>
+                        </div>
+                        <i class="bi bi-box text-info" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <small class="text-muted">Productos vendidos</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ticket Promedio -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted small mb-1">Ticket Promedio</p>
+                            <h3 class="mb-0 text-warning">$@Model.TicketPromedio.ToString("F2")</h3>
+                        </div>
+                        <i class="bi bi-calculator text-warning" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <small class="text-muted">Valor promedio por orden</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Segunda Fila de Métricas -->
+    <div class="row mb-4">
+        <!-- Productos -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted small mb-1">Total Productos</p>
+                            <h3 class="mb-0">@Model.TotalProductos</h3>
+                            <small class="text-success">? @Model.ProductosActivos activos</small>
+                        </div>
+                        <i class="bi bi-box-seam" style="font-size: 1.5rem; color: #6f42c1;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clientes Únicos -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted small mb-1">Clientes Únicos</p>
+                            <h3 class="mb-0 text-info">@Model.ClientesUnicos</h3>
+                        </div>
+                        <i class="bi bi-people text-info" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <small class="text-muted">Personas que compraron</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visitas Totales -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted small mb-1">Visitas Totales</p>
+                            <h3 class="mb-0">@Model.VisitasTotales</h3>
+                        </div>
+                        <i class="bi bi-eye" style="font-size: 1.5rem; color: #20c997;"></i>
+                    </div>
+                    <small class="text-muted">Visualizaciones de productos</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasa de Conversión -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted small mb-1">Tasa Conversión</p>
+                            <h3 class="mb-0 text-danger">@Model.TasaConversionPromedio.ToString("F2")%</h3>
+                        </div>
+                        <i class="bi bi-percent" style="font-size: 1.5rem; color: #dc3545;"></i>
+                    </div>
+                    <small class="text-muted">Visitas ? Compras</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Productos -->
+    <div class="row mb-4">
+        <!-- Top 5 Más Vendidos -->
+        <div class="col-lg-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="bi bi-star-fill"></i> Top 5 Más Vendidos</h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.Top5MasVendidos.Any())
+                    {
+                        <div class="list-group">
+                            @foreach (var producto in Model.Top5MasVendidos)
+                            {
+                                <div class="list-group-item border-0 py-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="badge bg-primary me-2">@producto.Posicion</span>
+                                            <span>@producto.Nombre</span>
+                                        </div>
+                                        <strong>@producto.Valor @producto.Metrica</strong>
+                                    </div>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        @{
+                                            var maxValue = Model.Top5MasVendidos.Max(p => p.Valor);
+                                            var percentage = maxValue > 0 ? (producto.Valor / maxValue) * 100 : 0;
+                                        }
+                                        <div class="progress-bar" role="progressbar" style="width: @percentage%"></div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">Sin datos aún</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 5 Mejor Calificados -->
+        <div class="col-lg-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0"><i class="bi bi-hand-thumbs-up"></i> Top 5 Mejor Calificados</h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.Top5MejorCalificados.Any())
+                    {
+                        <div class="list-group">
+                            @foreach (var producto in Model.Top5MejorCalificados)
+                            {
+                                <div class="list-group-item border-0 py-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="badge bg-success me-2">@producto.Posicion</span>
+                                            <span>@producto.Nombre</span>
+                                        </div>
+                                        <div>
+                                            @for (int i = 0; i < (int)producto.Valor; i++)
+                                            {
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                            }
+                                            <span class="ms-1">@producto.Valor.ToString("F1")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">Sin datos aún</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas Mensuales -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="bi bi-calendar-month"></i> Estadísticas de Este Mes</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <p class="text-muted small">Ventas Este Mes</p>
+                            <h4 class="text-info">@Model.VentasEsteMes</h4>
+                            <small>@(Model.VentasEsteMes > 0 ? "? Activo" : "?? Sin ventas")</small>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="text-muted small">Monto Este Mes</p>
+                            <h4 class="text-success">$@Model.VentasEsteMesMonto.ToString("F2")</h4>
+                            <small>Ingresos del mes</small>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="text-muted small">Visitas Este Mes</p>
+                            <h4>@Model.VisitasEsteMes</h4>
+                            <small>Visualizaciones</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información Temporal -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0"><i class="bi bi-calendar-event"></i> Línea de Tiempo de Ventas</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <strong>Primera Venta:</strong>
+                            <br>
+                            <span class="text-muted">@Model.PrimerVenta.ToString("dd/MM/yyyy HH:mm")</span>
+                        </li>
+                        <li class="mb-3">
+                            <strong>Última Venta:</strong>
+                            <br>
+                            <span class="text-muted">@Model.UltimaVenta.ToString("dd/MM/yyyy HH:mm")</span>
+                        </li>
+                        <li>
+                            <strong>Promedio Diario:</strong>
+                            <br>
+                            <span class="text-muted">$@Model.VentasPromedioPorDia.ToString("F2") por día</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0"><i class="bi bi-info-circle"></i> Información General</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <strong>Días Como Comerciante:</strong>
+                            <br>
+                            <span class="text-muted">@Model.DiasComoComerciante días</span>
+                        </li>
+                        <li class="mb-3">
+                            <strong>Calificación Promedio:</strong>
+                            <br>
+                            <span>
+                                @for (int i = 0; i < (int)Model.CalificacionPromedio; i++)
+                                {
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                }
+                                <span class="ms-2">@Model.CalificacionPromedio.ToString("F1") / 5.0</span>
+                            </span>
+                        </li>
+                        <li>
+                            <strong>Reseñas Totales:</strong>
+                            <br>
+                            <span class="text-muted">@Model.ResenasTotal reseñas</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Análisis de Productos -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="bi bi-pie-chart"></i> Análisis de Catálogo</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-3 pb-3 border-bottom">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span><strong>Total Productos:</strong></span>
+                                <span class="badge bg-primary">@Model.TotalProductos</span>
+                            </div>
+                        </li>
+                        <li class="mb-3 pb-3 border-bottom">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span><strong>Activos:</strong></span>
+                                <span class="badge bg-success">@Model.ProductosActivos</span>
+                            </div>
+                        </li>
+                        <li class="mb-3 pb-3 border-bottom">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span><strong>Agotados:</strong></span>
+                                <span class="badge bg-danger">@Model.ProductosAgotados</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span><strong>Ingreso Promedio/Producto:</strong></span>
+                                <span class="badge bg-info">$@Model.IngresoPromedioPorProducto.ToString("F2")</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0"><i class="bi bi-graph-up"></i> Valor de Inventario</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <h4 class="text-success">$@Model.StockTotalValor.ToString("F2")</h4>
+                        <small class="text-muted">Valor total del stock actual</small>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Consejo:</strong> Mantén un equilibrio entre stock y rotación de productos para maximizar ganancias.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botones de Acción -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="@Url.Action("MisProductos", "Usuarios")" class="btn btn-primary">
+                    <i class="bi bi-box-seam"></i> Ver Mis Productos
+                </a>
+                <a href="@Url.Action("Dashboard", "Usuarios")" class="btn btn-outline-secondary">
+                    <i class="bi bi-speedometer2"></i> Volver al Dashboard
+                </a>
+                <button type="button" class="btn btn-outline-info" onclick="window.print()">
+                    <i class="bi bi-printer"></i> Imprimir Estadísticas
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información Adicional -->
+    <div class="alert alert-light border">
+        <i class="bi bi-lightbulb"></i>
+        <strong>?? Recomendaciones:</strong>
+        <ul class="mb-0 mt-2">
+            <li>@if (Model.TasaConversionPromedio < 2) { <span class="text-danger">Aumenta la tasa de conversión mejorando descripciones de productos</span> } else { <span class="text-success">¡Buena tasa de conversión!</span> }</li>
+            <li>@if (Model.ProductosActivos == 0) { <span class="text-danger">Agrega nuevos productos a tu catálogo</span> } else { <span class="text-success">Mantén actualizado tu catálogo de productos</span> }</li>
+            <li>@if (Model.CalificacionPromedio >= 4) { <span class="text-success">¡Excelente calificación! Mantén la calidad</span> } else { <span class="text-warning">Mejora la experiencia del cliente para aumentar calificaciones</span> }</li>
+        </ul>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .list-group-item {
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+
+    @@media print {
+        .btn, .alert-light {
+            display: none;
+        }
+    }
+</style>

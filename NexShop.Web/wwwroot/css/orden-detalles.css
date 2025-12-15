@@ -1,0 +1,63 @@
+/* Estilos para la página de detalles de órdenes */
+
+.timeline {
+    position: relative;
+    padding: 0;
+}
+
+.timeline-item {
+    padding-bottom: 1rem;
+    position: relative;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 40px;
+    width: 2px;
+    height: calc(100% + 10px);
+    background-color: #dee2e6;
+}
+
+.timeline-item:last-child::before {
+    display: none;
+}
+
+.timeline-marker {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.sticky-top {
+    position: sticky;
+    top: 20px;
+}
+
+.opacity-50 {
+    opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+    .sticky-top {
+        position: relative;
+        top: auto;
+        margin-top: 1rem;
+    }
+    
+    .timeline-marker {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .timeline-item::before {
+        left: 13px;
+    }
+}

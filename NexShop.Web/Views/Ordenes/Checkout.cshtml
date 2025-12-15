@@ -1,0 +1,210 @@
+@model CheckoutViewModel
+@using NexShop.Web.ViewModels
+
+@{
+    ViewData["Title"] = "Proceder al Pago";
+}
+
+<div class="container-lg py-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-credit-card"></i> Información de Pago
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="Checkout">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <!-- Dirección de Entrega -->
+                        <div class="mb-3">
+                            <label asp-for="DireccionEntrega" class="form-label">
+                                <i class="bi bi-house-door"></i> Dirección de Entrega
+                            </label>
+                            <textarea asp-for="DireccionEntrega" class="form-control" rows="3" 
+                                      placeholder="Ej: Calle Principal 123, Apto 4B, Ciudad"></textarea>
+                            <span asp-validation-for="DireccionEntrega" class="text-danger"></span>
+                        </div>
+
+                        <!-- Método de Pago -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="bi bi-wallet2"></i> Método de Pago
+                            </label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check border rounded p-3 cursor-pointer">
+                                        <input class="form-check-input" type="radio" name="MetodoPago" 
+                                               id="metodoPago1" value="Tarjeta de Crédito" checked>
+                                        <label class="form-check-label" for="metodoPago1">
+                                            <i class="bi bi-credit-card-2-front"></i> Tarjeta de Crédito
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check border rounded p-3 cursor-pointer">
+                                        <input class="form-check-input" type="radio" name="MetodoPago" 
+                                               id="metodoPago2" value="Tarjeta de Débito">
+                                        <label class="form-check-label" for="metodoPago2">
+                                            <i class="bi bi-credit-card-2-back"></i> Tarjeta de Débito
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <div class="form-check border rounded p-3 cursor-pointer">
+                                        <input class="form-check-input" type="radio" name="MetodoPago" 
+                                               id="metodoPago3" value="Transferencia Bancaria">
+                                        <label class="form-check-label" for="metodoPago3">
+                                            <i class="bi bi-bank"></i> Transferencia Bancaria
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check border rounded p-3 cursor-pointer">
+                                        <input class="form-check-input" type="radio" name="MetodoPago" 
+                                               id="metodoPago4" value="Billetera Digital">
+                                        <label class="form-check-label" for="metodoPago4">
+                                            <i class="bi bi-wallet"></i> Billetera Digital
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notas Adicionales -->
+                        <div class="mb-3">
+                            <label asp-for="Notas" class="form-label">
+                                <i class="bi bi-chat-left-text"></i> Notas Adicionales (Opcional)
+                            </label>
+                            <textarea asp-for="Notas" class="form-control" rows="2" 
+                                      placeholder="Ej: Entregar entre 9-17hs, cuidado con..."></textarea>
+                            <span asp-validation-for="Notas" class="text-danger"></span>
+                        </div>
+
+                        <!-- Términos y Condiciones -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" asp-for="AceptaTerminos" id="terminos">
+                                <label class="form-check-label" for="terminos">
+                                    Acepto los <a href="#" target="_blank" class="text-primary">términos y condiciones</a> 
+                                    y la <a href="#" target="_blank" class="text-primary">política de privacidad</a>
+                                </label>
+                            </div>
+                            <span asp-validation-for="AceptaTerminos" class="text-danger d-block mt-2"></span>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="d-flex gap-2">
+                            <a asp-action="Index" asp-controller="Carrito" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Volver al Carrito
+                            </a>
+                            <button type="submit" class="btn btn-success flex-grow-1">
+                                <i class="bi bi-credit-card"></i> Proceder al Pago
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen de Compra (Columna Derecha) -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-receipt"></i> Resumen de Compra
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Artículos -->
+                    <div class="mb-3">
+                        <h6 class="text-muted">Artículos (@Model.ArticulosCarrito.Count)</h6>
+                        <div class="border-top pt-2">
+                            @foreach (var item in Model.ArticulosCarrito)
+                            {
+                                <div class="d-flex justify-content-between mb-2 align-items-center">
+                                    <span class="text-truncate">
+                                        <i class="bi bi-box"></i> @item.ProductoNombre
+                                        @if (item.Cantidad >= item.StockDisponible)
+                                        {
+                                            <span class="badge bg-warning ms-2" title="Cantidad máxima disponible">Max</span>
+                                        }
+                                        else if (item.StockDisponible - item.Cantidad < 3)
+                                        {
+                                            <span class="badge bg-danger ms-2" title="Quedan pocas unidades">??</span>
+                                        }
+                                    </span>
+                                    <span class="text-nowrap ms-2">
+                                        <span class="text-muted small">x@item.Cantidad</span> 
+                                        $@(item.Precio * item.Cantidad).ToString("F2")
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Cálculos -->
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Subtotal:</span>
+                            <span>$@Model.Subtotal.ToString("F2")</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Impuesto (16%):</span>
+                            <span>$@Model.Impuesto.ToString("F2")</span>
+                        </div>
+                    </div>
+
+                    @if (Model.MontoEnvio > 0)
+                    {
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between">
+                                <span>Envío:</span>
+                                <span>$@Model.MontoEnvio.ToString("F2")</span>
+                            </div>
+                        </div>
+                    }
+
+                    <hr>
+
+                    <!-- Total -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">Total a Pagar:</h6>
+                            <h5 class="text-success mb-0">$@Model.Total.ToString("F2")</h5>
+                        </div>
+                    </div>
+
+                    <!-- Información de Seguridad -->
+                    <div class="alert alert-info small" role="alert">
+                        <i class="bi bi-shield-check"></i> 
+                        <strong>Pago Seguro:</strong> Tu información de pago está protegida.
+                    </div>
+
+                    <!-- Métodos de Pago Aceptados -->
+                    <div class="alert alert-light small">
+                        <strong>Métodos de Pago:</strong>
+                        <div class="mt-2">
+                            <i class="bi bi-credit-card"></i> Tarjetas
+                            <i class="bi bi-bank ms-3"></i> Transferencia
+                            <i class="bi bi-wallet ms-3"></i> Digital
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

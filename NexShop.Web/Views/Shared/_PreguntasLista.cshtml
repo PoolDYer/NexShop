@@ -1,0 +1,152 @@
+@model List<PreguntaListViewModel>
+@using NexShop.Web.ViewModels
+
+<div class="qa-container">
+    @if (Model.Any())
+    {
+        <div class="qa-list">
+            @foreach (var pregunta in Model)
+            {
+                <div class="qa-item card mb-3 border-left-primary" data-pregunta-id="@pregunta.PreguntaId">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <div class="d-flex gap-2 align-items-center flex-grow-1">
+                            <i class="bi bi-question-circle text-primary"></i>
+                            <h6 class="mb-0">
+                                <strong>@pregunta.Titulo</strong>
+                            </h6>
+                        </div>
+                        @if (pregunta.Estado == "Respondida")
+                        {
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle"></i> Respondida
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">
+                                <i class="bi bi-clock"></i> Pendiente
+                            </span>
+                        }
+                    </div>
+
+                    <div class="card-body">
+                        @if (!string.IsNullOrEmpty(pregunta.Descripcion))
+                        {
+                            <p class="text-muted mb-2">@pregunta.Descripcion</p>
+                        }
+
+                        <div class="qa-meta small text-muted mb-3">
+                            <span><i class="bi bi-person"></i> @pregunta.UsuarioNombre</span>
+                            <span class="mx-2">•</span>
+                            <span><i class="bi bi-clock"></i> @pregunta.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+
+                        <!-- Botones de Utilidad -->
+                        <div class="qa-actions mb-3">
+                            <button class="btn btn-sm btn-outline-secondary vote-util-btn" 
+                                    data-pregunta-id="@pregunta.PreguntaId"
+                                    title="¿Te fue útil?">
+                                <i class="bi bi-hand-thumbs-up"></i> 
+                                Útil (<span class="vote-count">@pregunta.VotosUtiles</span>)
+                            </button>
+                        </div>
+
+                        <!-- Respuestas -->
+                        @if (pregunta.Respuestas.Any())
+                        {
+                            <div class="respuestas-container mt-3 pt-3 border-top">
+                                <h6 class="mb-3">
+                                    <i class="bi bi-chat-left-text"></i>
+                                    Respuestas (@pregunta.Respuestas.Count)
+                                </h6>
+
+                                @foreach (var respuesta in pregunta.Respuestas)
+                                {
+                                    <div class="respuesta-item mb-3 p-3 bg-light rounded" 
+                                         data-respuesta-id="@respuesta.RespuestaId">
+                                        @if (respuesta.EsRespuestaOficial)
+                                        {
+                                            <span class="badge bg-info mb-2">
+                                                <i class="bi bi-star-fill"></i> Respuesta Oficial
+                                            </span>
+                                        }
+
+                                        <p class="mb-2">@respuesta.Contenido</p>
+
+                                        <div class="respuesta-meta small text-muted d-flex justify-content-between">
+                                            <span>
+                                                <i class="bi bi-person"></i> @respuesta.UsuarioNombre
+                                                • @respuesta.FechaCreacion.ToString("dd/MM/yyyy HH:mm")
+                                            </span>
+                                            <button class="btn btn-sm btn-link vote-respuesta-btn" 
+                                                    data-respuesta-id="@respuesta.RespuestaId">
+                                                <i class="bi bi-hand-thumbs-up"></i> 
+                                                Útil (<span>@respuesta.VotosUtiles</span>)
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        <!-- Formulario de Respuesta (solo si autenticado) -->
+                        @if (User?.Identity?.IsAuthenticated == true)
+                        {
+                            <div class="respuesta-form mt-3 pt-3 border-top">
+                                <h6 class="mb-2">Publicar Respuesta</h6>
+                                <form class="respuesta-form-submit" data-pregunta-id="@pregunta.PreguntaId">
+                                    <div class="mb-2">
+                                        <textarea class="form-control form-control-sm" name="contenido" 
+                                                  placeholder="Escribe tu respuesta..." rows="3" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-send"></i> Publicar Respuesta
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle"></i>
+            <p class="mb-0">No hay preguntas aún. ¡Sé el primero en preguntar!</p>
+        </div>
+    }
+</div>
+
+<style>
+    .qa-container {
+        margin-top: 2rem;
+    }
+
+    .qa-item {
+        border-left: 4px solid #2b7de9;
+        transition: all 0.3s ease;
+    }
+
+    .qa-item:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .qa-meta, .respuesta-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .respuesta-item {
+        border-left: 3px solid #ddd;
+        padding-left: 1rem !important;
+    }
+
+    .vote-util-btn:hover {
+        background-color: #2b7de9 !important;
+        color: white !important;
+        border-color: #2b7de9 !important;
+    }
+</style>

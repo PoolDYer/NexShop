@@ -1,0 +1,171 @@
+@model ProductoCreateViewModel
+@{
+    ViewData["Title"] = "Crear Producto";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Crear Nuevo Producto</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" asp-action="Create" asp-controller="Productos" novalidate>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <h6 class="alert-heading"><i class="bi bi-exclamation-circle"></i> Errores en el formulario:</h6>
+                            <ul class="mb-0">
+                                @foreach (var modelState in ViewData.ModelState.Values)
+                                {
+                                    @foreach (var error in modelState.Errors)
+                                    {
+                                        <li>@error.ErrorMessage</li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    <!-- Información Básica -->
+                    <div class="mb-4">
+                        <h5 class="mb-3"><i class="bi bi-info-circle"></i> Información Básica</h5>
+
+                        <!-- Nombre -->
+                        <div class="mb-3">
+                            <label asp-for="Nombre" class="form-label fw-bold">Nombre del Producto *</label>
+                            <input asp-for="Nombre" class="form-control form-control-lg" 
+                                   placeholder="Ej: Samsung Galaxy S24" required>
+                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                            <small class="text-muted d-block mt-1">
+                                <i class="bi bi-info-circle"></i> Máximo 200 caracteres
+                            </small>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="mb-3">
+                            <label asp-for="Descripcion" class="form-label fw-bold">Descripción *</label>
+                            <textarea asp-for="Descripcion" class="form-control" rows="5"
+                                      placeholder="Describe detalladamente tu producto..." required></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                            <small class="text-muted d-block mt-1">
+                                <i class="bi bi-info-circle"></i> Proporciona detalles claros sobre el producto
+                            </small>
+                        </div>
+
+                        <!-- SKU -->
+                        <div class="mb-3">
+                            <label asp-for="SKU" class="form-label fw-bold">SKU (Código del Producto)</label>
+                            <input asp-for="SKU" class="form-control" placeholder="Ej: SKU-12345">
+                            <span asp-validation-for="SKU" class="text-danger small"></span>
+                            <small class="text-muted d-block mt-1">
+                                <i class="bi bi-info-circle"></i> Código único del producto (opcional)
+                            </small>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- Precios y Stock -->
+                    <div class="mb-4">
+                        <h5 class="mb-3"><i class="bi bi-tag"></i> Precios y Stock</h5>
+
+                        <div class="row">
+                            <!-- Precio -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Precio" class="form-label fw-bold">Precio *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input asp-for="Precio" type="number" step="0.01" min="0" 
+                                           class="form-control" placeholder="0.00" required>
+                                </div>
+                                <span asp-validation-for="Precio" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Stock -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Stock" class="form-label fw-bold">Stock *</label>
+                                <input asp-for="Stock" type="number" min="0" class="form-control" 
+                                       placeholder="0" required>
+                                <span asp-validation-for="Stock" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Stock Mínimo -->
+                        <div class="mb-3">
+                            <label asp-for="StockMinimo" class="form-label fw-bold">Stock Mínimo *</label>
+                            <input asp-for="StockMinimo" type="number" min="0" class="form-control" 
+                                   placeholder="Nivel de alerta de stock" required>
+                            <span asp-validation-for="StockMinimo" class="text-danger small"></span>
+                            <small class="text-muted d-block mt-1">
+                                <i class="bi bi-info-circle"></i> Se marcará como agotado cuando el stock sea menor a este valor
+                            </small>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- Categoría -->
+                    <div class="mb-4">
+                        <h5 class="mb-3"><i class="bi bi-list"></i> Categoría</h5>
+
+                        <div class="mb-3">
+                            <label asp-for="CategoriaId" class="form-label fw-bold">Seleccionar Categoría *</label>
+                            <select asp-for="CategoriaId" class="form-select form-select-lg" required>
+                                <option value="0">-- Selecciona una categoría --</option>
+                                @foreach (var categoria in Model.Categorias ?? new List<CategoriaSelectViewModel>())
+                                {
+                                    <option value="@categoria.CategoriaId">@categoria.Nombre</option>
+                                }
+                            </select>
+                            <span asp-validation-for="CategoriaId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- Botones de Acción -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-action="Index" asp-controller="Productos" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="reset" class="btn btn-outline-warning">
+                            <i class="bi bi-arrow-clockwise"></i> Limpiar
+                        </button>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle"></i> Crear Producto
+                        </button>
+                    </div>
+
+                    <!-- Nota Importante -->
+                    <div class="alert alert-info mt-4 mb-0">
+                        <i class="bi bi-info-circle"></i> 
+                        <strong>Nota:</strong> Podrás agregar imágenes y videos después de crear el producto.
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Validación del cliente
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var form = document.querySelector('form');
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+}

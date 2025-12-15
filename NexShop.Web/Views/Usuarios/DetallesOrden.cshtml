@@ -1,0 +1,321 @@
+@model NexShop.Web.Models.Orden
+
+@{
+    ViewData["Title"] = "Detalles de Orden #" + Model.OrdenId;
+}
+
+<div class="container py-4">
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="mb-0"><i class="bi bi-receipt"></i> Orden #@Model.OrdenId</h1>
+            <p class="text-muted">Detalles completos de tu compra</p>
+        </div>
+        <div class="col-auto">
+            <a href="@Url.Action("MisOrdenes", "Usuarios")" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver a Mis Órdenes
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Información de la orden -->
+        <div class="col-lg-8">
+            <!-- Estado y fecha -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Estado de Orden</h6>
+                            <p class="mb-3">
+                                @if (Model.Estado == "Entregada")
+                                {
+                                    <span class="badge bg-success" style="font-size: 1rem;">
+                                        <i class="bi bi-check-circle"></i> Entregada
+                                    </span>
+                                }
+                                else if (Model.Estado == "Pendiente")
+                                {
+                                    <span class="badge bg-warning text-dark" style="font-size: 1rem;">
+                                        <i class="bi bi-clock"></i> Pendiente
+                                    </span>
+                                }
+                                else if (Model.Estado == "Cancelada")
+                                {
+                                    <span class="badge bg-danger" style="font-size: 1rem;">
+                                        <i class="bi bi-x-circle"></i> Cancelada
+                                    </span>
+                                }
+                                else if (Model.Estado == "En Envío")
+                                {
+                                    <span class="badge bg-info" style="font-size: 1rem;">
+                                        <i class="bi bi-truck"></i> En Envío
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary" style="font-size: 1rem;">@Model.Estado</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Fecha de Orden</h6>
+                            <p class="mb-0">
+                                <strong>@Model.FechaCreacion.ToString("dddd, dd MMMM yyyy - HH:mm")</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artículos de la orden -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Artículos de la Orden (@Model.Detalles.Count)</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Producto</th>
+                                <th class="text-end">Precio Unitario</th>
+                                <th class="text-center">Cantidad</th>
+                                <th class="text-end">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detalle in Model.Detalles)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (detalle.Producto != null)
+                                        {
+                                            <strong>@detalle.Producto.Nombre</strong><br>
+                                            <small class="text-muted">ID: @detalle.ProductoId</small>
+                                        }
+                                        else
+                                        {
+                                            <strong>Producto (ID: @detalle.ProductoId)</strong><br>
+                                            <small class="text-muted">Producto eliminado</small>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <strong>$@detalle.PrecioUnitario.ToString("F2")</strong>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-light text-dark">@detalle.Cantidad</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <strong>$@detalle.Subtotal.ToString("F2")</strong>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Información de entrega -->
+            @if (!string.IsNullOrEmpty(Model.DireccionEntrega))
+            {
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-geo-alt"></i> Dirección de Entrega</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0">
+                            <strong>@Model.DireccionEntrega</strong>
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Resumen de pago -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Resumen de Pago</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Subtotal -->
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <strong>$@Model.Detalles.Sum(d => d.Subtotal).ToString("F2")</strong>
+                    </div>
+
+                    <!-- Impuesto -->
+                    @if (Model.Impuesto > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Impuesto:</span>
+                            <strong>$@Model.Impuesto.ToString("F2")</strong>
+                        </div>
+                    }
+
+                    <!-- Envío -->
+                    @if (Model.MontoEnvio > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Envío:</span>
+                            <strong>$@Model.MontoEnvio.ToString("F2")</strong>
+                        </div>
+                    }
+
+                    <!-- Descuento -->
+                    @if (Model.Descuento > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-2 text-success">
+                            <span>Descuento:</span>
+                            <strong>-$@Model.Descuento.ToString("F2")</strong>
+                        </div>
+                    }
+
+                    <hr class="my-3">
+
+                    <!-- Total -->
+                    <div class="d-flex justify-content-between mb-3">
+                        <h6 class="mb-0">Total a Pagar:</h6>
+                        <h6 class="mb-0 text-success">$@Model.MontoTotal.ToString("F2")</h6>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <!-- Método de pago -->
+                    @if (!string.IsNullOrEmpty(Model.MetodoPago))
+                    {
+                        <div class="mb-3">
+                            <h6 class="text-muted small">Método de Pago</h6>
+                            <p class="mb-0">
+                                <strong>@Model.MetodoPago</strong>
+                            </p>
+                        </div>
+                    }
+
+                    <!-- Número de orden -->
+                    <div class="mb-3 pb-3 border-bottom">
+                        <h6 class="text-muted small">Número de Orden</h6>
+                        <p class="mb-0 font-monospace">
+                            <strong>@Model.NumeroOrden</strong>
+                        </p>
+                    </div>
+
+                    <!-- Acciones -->
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="descargarRecibo()">
+                            <i class="bi bi-download"></i> Descargar Recibo
+                        </button>
+                        @if (Model.Estado == "Entregada")
+                        {
+                            <a href="@Url.Action("Index", "Resenas")" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-star"></i> Dejar Reseña
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de estado -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0"><i class="bi bi-clock-history"></i> Historial de Estado</h5>
+        </div>
+        <div class="card-body">
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker bg-success"></div>
+                    <div class="timeline-content">
+                        <strong>Orden Creada</strong>
+                        <p class="text-muted small">@Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+                </div>
+                @if (Model.FechaConfirmacion.HasValue)
+                {
+                    <div class="timeline-item">
+                        <div class="timeline-marker bg-info"></div>
+                        <div class="timeline-content">
+                            <strong>Orden Confirmada</strong>
+                            <p class="text-muted small">@Model.FechaConfirmacion.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                }
+                @if (Model.FechaEnvio.HasValue)
+                {
+                    <div class="timeline-item">
+                        <div class="timeline-marker bg-warning"></div>
+                        <div class="timeline-content">
+                            <strong>En Envío</strong>
+                            <p class="text-muted small">@Model.FechaEnvio.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                }
+                @if (Model.FechaEntrega.HasValue)
+                {
+                    <div class="timeline-item">
+                        <div class="timeline-marker bg-success"></div>
+                        <div class="timeline-content">
+                            <strong>Entregada</strong>
+                            <p class="text-muted small">@Model.FechaEntrega.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón volver -->
+    <div class="mt-4 text-center">
+        <a href="@Url.Action("MisOrdenes", "Usuarios")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver a Mis Órdenes
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function descargarRecibo() {
+            alert('Función de descarga en desarrollo');
+            // TODO: Implementar descarga de PDF
+        }
+    </script>
+
+    <style>
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .timeline-item:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 50px;
+            height: 30px;
+            width: 2px;
+            background-color: #dee2e6;
+        }
+
+        .timeline-marker {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            padding-top: 5px;
+        }
+    </style>
+}

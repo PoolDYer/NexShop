@@ -1,0 +1,39 @@
+@{
+    ViewData["Title"] = "Procesando Pago...";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid d-flex align-items-center justify-content-center" style="height: 100vh;">
+    <div class="text-center">
+        <div class="mb-4">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+        </div>
+
+        <h3 class="mb-2">Procesando tu Pago</h3>
+        <p class="text-muted mb-3">Por favor, no cierres esta página...</p>
+
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            Estamos validando tu información de pago y procesando tu orden.
+            <br>
+            <small>Esto generalmente toma 2-4 segundos.</small>
+        </div>
+
+        <div class="progress mb-3" style="height: 5px;">
+            <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" 
+                 style="width: 100%"></div>
+        </div>
+
+        <p class="text-muted small">
+            <i class="bi bi-lock"></i> Tu información de pago está protegida
+        </p>
+    </div>
+</div>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+</style>

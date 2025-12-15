@@ -1,0 +1,488 @@
+﻿@{
+    ViewData["Title"] = "NexShop - Marketplace de Compras y Ventas";
+    Layout = "_Layout";
+}
+
+<!-- Hero Section -->
+<section class="hero-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 100px 20px; text-align: center; position: relative; overflow: hidden;">
+    <!-- Animated Background Elements -->
+    <div style="position: absolute; top: -50%; left: -10%; opacity: 0.1; font-size: 20rem; font-weight: bold;">📦</div>
+    <div style="position: absolute; bottom: -30%; right: -5%; opacity: 0.1; font-size: 18rem; font-weight: bold;">🛍️</div>
+    
+    <div class="container position-relative" style="z-index: 1;">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mx-auto">
+                <!-- Main Headline -->
+                <h1 class="display-3 fw-bold mb-4" style="font-size: 3.5rem;">
+                    Bienvenido a <span style="color: #ffd700;">NexShop</span>
+                </h1>
+                
+                <!-- Subheadline -->
+                <p class="lead mb-4" style="font-size: 1.3rem; font-weight: 300;">
+                    El marketplace moderno donde compradores y vendedores se conectan. 
+                    Compra productos de calidad o vende tus artículos a miles de clientes.
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="d-flex gap-3 justify-content-center flex-wrap mb-5">
+                    <a href="@Url.Action("Index", "Productos")" class="btn btn-light btn-lg" style="padding: 12px 40px; font-weight: 600;">
+                        <i class="bi bi-shop"></i> Explorar Tienda
+                    </a>
+                    <a href="@Url.Action("Register", "Account")" class="btn btn-outline-light btn-lg" style="padding: 12px 40px; font-weight: 600;">
+                        <i class="bi bi-person-plus"></i> Comenzar Ahora
+                    </a>
+                </div>
+
+                <!-- Trust Indicators -->
+                <div class="d-flex justify-content-center gap-4 flex-wrap" style="margin-top: 50px;">
+                    <div class="text-white">
+                        <h4 class="mb-0">10K+</h4>
+                        <small>Productos Activos</small>
+                    </div>
+                    <div class="text-white">
+                        <h4 class="mb-0">5K+</h4>
+                        <small>Vendedores Verificados</small>
+                    </div>
+                    <div class="text-white">
+                        <h4 class="mb-0">50K+</h4>
+                        <small>Clientes Satisfechos</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5" style="background-color: #f8f9fa;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">¿Por Qué Elegir NexShop?</h2>
+            <p class="text-muted" style="font-size: 1.1rem;">Ofrecemos la mejor experiencia de compra y venta en línea</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Feature 1 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-shield-check" style="font-size: 2.5rem; color: #667eea;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">100% Seguro</h5>
+                    <p class="text-muted small">Transacciones protegidas con encriptación SSL y sistemas de pago verificados.</p>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-lightning-charge" style="font-size: 2.5rem; color: #f093fb;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Súper Rápido</h5>
+                    <p class="text-muted small">Navegación fluida y checkout en segundos. Envíos rápidos a todo el país.</p>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-person-check" style="font-size: 2.5rem; color: #4facfe;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Vendedores Verificados</h5>
+                    <p class="text-muted small">Todos nuestros vendedores son auditados y cuentan con evaluaciones reales.</p>
+                </div>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-headset" style="font-size: 2.5rem; color: #43e97b;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Soporte 24/7</h5>
+                    <p class="text-muted small">Equipo de soporte disponible siempre para resolver tus dudas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Cómo Funciona NexShop</h2>
+            <p class="text-muted" style="font-size: 1.1rem;">Tres simples pasos para comenzar</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Step 1 -->
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="bg-primary text-white rounded-circle mx-auto mb-4" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                        1
+                    </div>
+                    <h5 class="fw-bold mb-2">Crea tu Cuenta</h5>
+                    <p class="text-muted">Regístrate en segundos con tu email. Es gratis y sin complicaciones.</p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="bg-info text-white rounded-circle mx-auto mb-4" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                        2
+                    </div>
+                    <h5 class="fw-bold mb-2">Explora o Vende</h5>
+                    <p class="text-muted">Busca miles de productos o publica los tuyos de forma sencilla.</p>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="bg-success text-white rounded-circle mx-auto mb-4" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                        3
+                    </div>
+                    <h5 class="fw-bold mb-2">Compra o Recibe</h5>
+                    <p class="text-muted">Paga de forma segura y recibe tu pedido o comienza a ganar dinero.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Company Section -->
+<section class="py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="display-5 fw-bold mb-4">Acerca de NexShop</h2>
+                <p class="lead mb-3">
+                    NexShop es más que un marketplace. Somos una comunidad de emprendedores, 
+                    compradores inteligentes y vendedores apasionados.
+                </p>
+                <p class="mb-3">
+                    Nacimos con una visión clara: democratizar el comercio electrónico y permitir 
+                    que cualquiera pueda comprar o vender con confianza, seguridad y facilidad.
+                </p>
+                <p class="mb-4">
+                    Cada día, miles de transacciones exitosas suceden en nuestra plataforma. 
+                    Nos enorgullece ser el puente entre soñadores y compradores.
+                </p>
+                
+                <div class="d-flex gap-3">
+                    <a href="#" class="btn btn-light btn-lg">
+                        <i class="bi bi-question-circle"></i> Más Info
+                    </a>
+                    <a href="@Url.Action("Index", "Productos")" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-arrow-right"></i> Explorar Ahora
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    <!-- Stat 1 -->
+                    <div class="col-6">
+                        <div class="bg-white bg-opacity-20 p-4 rounded backdrop-blur">
+                            <h4 class="display-6 fw-bold mb-2">2023</h4>
+                            <p>Año de Fundación</p>
+                        </div>
+                    </div>
+                    <!-- Stat 2 -->
+                    <div class="col-6">
+                        <div class="bg-white bg-opacity-20 p-4 rounded backdrop-blur">
+                            <h4 class="display-6 fw-bold mb-2">15+</h4>
+                            <p>Países Atendidos</p>
+                        </div>
+                    </div>
+                    <!-- Stat 3 -->
+                    <div class="col-6">
+                        <div class="bg-white bg-opacity-20 p-4 rounded backdrop-blur">
+                            <h4 class="display-6 fw-bold mb-2">100%</h4>
+                            <p>Verificación de Vendedores</p>
+                        </div>
+                    </div>
+                    <!-- Stat 4 -->
+                    <div class="col-6">
+                        <div class="bg-white bg-opacity-20 p-4 rounded backdrop-blur">
+                            <h4 class="display-6 fw-bold mb-2">$2B+</h4>
+                            <p>Volumen de Transacciones</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Preview Section -->
+<section class="py-5" style="background-color: #f8f9fa;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Categorías Populares</h2>
+            <p class="text-muted" style="font-size: 1.1rem;">Encuentra lo que buscas en nuestras categorías destacadas</p>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm text-center p-4 cursor-pointer" style="transition: all 0.3s; cursor: pointer;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">📱</div>
+                    <h6 class="fw-bold">Tecnología</h6>
+                    <small class="text-muted">2,543 productos</small>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm text-center p-4 cursor-pointer" style="transition: all 0.3s; cursor: pointer;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">👗</div>
+                    <h6 class="fw-bold">Moda</h6>
+                    <small class="text-muted">1,856 productos</small>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm text-center p-4 cursor-pointer" style="transition: all 0.3s; cursor: pointer;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">🏠</div>
+                    <h6 class="fw-bold">Hogar</h6>
+                    <small class="text-muted">3,421 productos</small>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm text-center p-4 cursor-pointer" style="transition: all 0.3s; cursor: pointer;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">🎮</div>
+                    <h6 class="fw-bold">Entretenimiento</h6>
+                    <small class="text-muted">1,234 productos</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="py-5" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+    <div class="container text-center">
+        <h2 class="display-5 fw-bold mb-4">¿Listo para Comenzar?</h2>
+        <p class="lead mb-5" style="font-size: 1.2rem;">
+            Únete a miles de compradores y vendedores que confían en NexShop
+        </p>
+
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="@Url.Action("Register", "Account")" class="btn btn-light btn-lg" style="padding: 15px 50px; font-weight: 600;">
+                Crear Cuenta Gratis
+            </a>
+            <a href="@Url.Action("Index", "Productos")" class="btn btn-outline-light btn-lg" style="padding: 15px 50px; font-weight: 600;">
+                Ver Productos
+            </a>
+        </div>
+
+        <div class="mt-5 pt-5" style="border-top: 1px solid rgba(255,255,255,0.2);">
+            <p class="text-white text-opacity-75 mb-0">
+                <i class="bi bi-shield-check"></i> 100% Seguro | 
+                <i class="bi bi-lightning-charge"></i> Rápido y Confiable | 
+                <i class="bi bi-headset"></i> Soporte 24/7
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Lo Que Dicen Nuestros Usuarios</h2>
+            <p class="text-muted" style="font-size: 1.1rem;">Historias reales de compradores y vendedores exitosos</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Testimonial 1 -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-4 h-100">
+                    <div class="mb-3">
+                        <span style="color: #ffc107;">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                        </span>
+                    </div>
+                    <p class="mb-3 fst-italic">
+                        "Encontré exactamente lo que buscaba y en poco tiempo. ¡El servicio es excelente!"
+                    </p>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary text-white rounded-circle p-2 me-3" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            MC
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold">María Carlos</p>
+                            <small class="text-muted">Comprador Verificado</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-4 h-100">
+                    <div class="mb-3">
+                        <span style="color: #ffc107;">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                        </span>
+                    </div>
+                    <p class="mb-3 fst-italic">
+                        "Comencé a vender aquí hace 6 meses. Ahora es mi ingreso principal. Muy recomendado!"
+                    </p>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success text-white rounded-circle p-2 me-3" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            JP
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold">Juan Pérez</p>
+                            <small class="text-muted">Vendedor Verificado</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-4 h-100">
+                    <div class="mb-3">
+                        <span style="color: #ffc107;">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                        </span>
+                    </div>
+                    <p class="mb-3 fst-italic">
+                        "La plataforma es intuitiva y segura. He realizado múltiples compras sin problemas."
+                    </p>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-info text-white rounded-circle p-2 me-3" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            AR
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold">Ana Rodríguez</p>
+                            <small class="text-muted">Compradora Verificada</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQs Section -->
+<section class="py-5" style="background-color: #f8f9fa;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Preguntas Frecuentes</h2>
+            <p class="text-muted" style="font-size: 1.1rem;">Resolvemos tus dudas más comunes</p>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="accordion" id="faqAccordion">
+                    <!-- FAQ 1 -->
+                    <div class="accordion-item border-0 mb-3 shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                ¿Es seguro comprar en NexShop?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Sí, es completamente seguro. Utilizamos encriptación SSL, sistemas de pago verificados y todos nuestros vendedores son auditados. Además, contamos con garantía de comprador.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 2 -->
+                    <div class="accordion-item border-0 mb-3 shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                ¿Cuánto cuesta vender en NexShop?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                La registración es gratis. Solo cobraremos una comisión del 5% sobre tus ventas. Sin costos ocultos ni cuotas mensuales.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 3 -->
+                    <div class="accordion-item border-0 mb-3 shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                ¿Cuál es el tiempo de entrega?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Los tiempos de entrega varían según el vendedor y la ubicación. Generalmente es entre 2 a 7 días hábiles. El vendedor indicará el tiempo estimado en cada producto.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 4 -->
+                    <div class="accordion-item border-0 mb-3 shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                ¿Hay garantía de productos?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Cada vendedor establece su propia política de garantía. Recomendamos revisar los detalles antes de comprar. NexShop también ofrece protección al comprador en caso de fraude.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style type="text/css">
+    .hero-section {
+        min-height: 600px;
+        display: flex;
+        align-items: center;
+    }
+
+    .card {
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    .cursor-pointer:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .backdrop-blur {
+        backdrop-filter: blur(10px);
+    }
+</style>
+
+<link rel="stylesheet" href="~/css/home-responsive.css" />

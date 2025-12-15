@@ -1,0 +1,164 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    dynamic viewModel = ViewBag.viewModel ?? ViewData.Model;
+}
+
+<div class="container py-4">
+    <h1 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard</h1>
+
+    @if (viewModel?.Tipo == "Vendedor")
+    {
+        <!-- Dashboard Vendedor -->
+        <div class="row">
+            <!-- Card Total Productos -->
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-box-seam text-primary" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <h3 class="mb-1">@viewModel.TotalProductos</h3>
+                        <p class="text-muted mb-0">Productos Totales</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Productos Activos -->
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-3 mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-check-circle text-success" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <h3 class="mb-1">@viewModel.ProductosActivos</h3>
+                        <p class="text-muted mb-0">Productos Activos</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Total Ventas -->
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-3 mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-cash-coin text-info" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <h3 class="mb-1">$@viewModel.TotalVentas.ToString("F2")</h3>
+                        <p class="text-muted mb-0">Total Ventas</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Estadisticas -->
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <div class="rounded-circle bg-warning bg-opacity-10 p-3 mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-bar-chart text-warning" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <h3 class="mb-1">
+                            <a href="@Url.Action("Estadisticas", "Usuarios")" class="text-decoration-none">Ver</a>
+                        </h3>
+                        <p class="text-muted mb-0">Estadisticas Detalladas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones Vendedor -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <h5 class="mb-3">Acciones Rapidas</h5>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="@Url.Action("MisProductos", "Usuarios")" class="btn btn-primary">
+                        <i class="bi bi-box-seam"></i> Mis Productos
+                    </a>
+                    <a href="@Url.Action("Create", "Productos")" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> Agregar Producto
+                    </a>
+                    <a href="@Url.Action("Perfil", "Usuarios")" class="btn btn-info">
+                        <i class="bi bi-person"></i> Mi Perfil
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Dashboard Comprador -->
+        <div class="row">
+            <!-- Card Total Ordenes -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-bag-check text-primary" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <h3 class="mb-1">@viewModel.TotalOrdenes</h3>
+                        <p class="text-muted mb-0">Ordenes Totales</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Gastos Totales -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-3 mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-cash-coin text-success" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <h3 class="mb-1">$@viewModel.GastosTotal.ToString("F2")</h3>
+                        <p class="text-muted mb-0">Gastos Totales</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Mi Perfil -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-3 mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-person-circle text-info" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <h3 class="mb-1">
+                            <a href="@Url.Action("Perfil", "Usuarios")" class="text-decoration-none">Ver</a>
+                        </h3>
+                        <p class="text-muted mb-0">Mi Perfil</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones Comprador -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <h5 class="mb-3">Acciones Rapidas</h5>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="@Url.Action("MisOrdenes", "Usuarios")" class="btn btn-primary">
+                        <i class="bi bi-bag-check"></i> Mis Ordenes
+                    </a>
+                    <a href="@Url.Action("Index", "Productos")" class="btn btn-success">
+                        <i class="bi bi-shop"></i> Tienda
+                    </a>
+                    <a href="@Url.Action("Index", "Carrito")" class="btn btn-info">
+                        <i class="bi bi-cart"></i> Carrito
+                    </a>
+                    <a href="@Url.Action("Perfil", "Usuarios")" class="btn btn-warning">
+                        <i class="bi bi-person"></i> Mi Perfil
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Informacion General -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="alert alert-info" role="alert">
+                <i class="bi bi-info-circle"></i>
+                <strong>Bienvenido @viewModel.Usuario.NombreCompleto!</strong><br>
+                Aqui puedes ver un resumen de tu actividad en NexShop. Usa los botones de arriba para acceder a tus ordenes, productos, perfil y configuracion.
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,670 @@
+@model ProductoDetailViewModel
+@using NexShop.Web.Services
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = Model.Nombre;
+    bool esVendedor = User.Identity?.IsAuthenticated == true && User.IsInRole("Vendedor");
+    bool esAdmin = User.Identity?.IsAuthenticated == true && User.IsInRole("Admin");
+    bool esPropietario = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.VendedorId;
+    bool puedeEditar = esAdmin || (esVendedor && esPropietario);
+    var galeria = Model.Multimedia.Where(m => m.Tipo == "Foto").OrderBy(m => m.Orden).ToList();
+    var imagenPrincipal = galeria.FirstOrDefault(m => m.EsPrincipal) ?? galeria.FirstOrDefault();
+}
+
+<link rel="stylesheet" href="~/css/galeria-productos-responsive.css" />
+
+<div class="row">
+    <!-- Columna Izquierda - Galería -->
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm galeria-producto">
+            <!-- Carrusel de Imágenes -->
+            @if (galeria.Any())
+            {
+                <div id="productCarousel" class="carousel slide carrusel-principal" data-bs-ride="carousel">
+                    <!-- Indicadores -->
+                    @if (galeria.Count > 1)
+                    {
+                        <div class="carousel-indicators">
+                            @for (int i = 0; i < galeria.Count; i++)
+                            {
+                                <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="@i" 
+                                        class="@(i == 0 ? "active" : "")" 
+                                        aria-label="Imagen @(i + 1)"
+                                        title="Imagen @(i + 1) de @galeria.Count"></button>
+                            }
+                        </div>
+                    }
+
+                    <!-- Imágenes -->
+                    <div class="carousel-inner">
+                        @for (int i = 0; i < galeria.Count; i++)
+                        {
+                            var imagen = galeria[i];
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <img src="@imagen.Url" 
+                                     alt="@imagen.Descripcion" 
+                                     class="carrusel-imagen d-block"
+                                     loading="lazy"
+                                     decoding="async">
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Controles Carrusel -->
+                    @if (galeria.Count > 1)
+                    {
+                        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev" title="Imagen anterior">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next" title="Siguiente imagen">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    }
+                </div>
+
+                <!-- Thumbnails -->
+                @if (galeria.Count > 1)
+                {
+                    <div class="galeria-thumbnails mt-3">
+                        @foreach (var (imagen, indice) in galeria.Select((img, idx) => (img, idx)).Take(10))
+                        {
+                            <div class="thumbnail-item @(indice == 0 ? "active" : "")" 
+                                 data-bs-slide-to="@indice"
+                                 data-bs-target="#productCarousel"
+                                 role="button"
+                                 tabindex="0"
+                                 title="Ver imagen @(indice + 1)"
+                                 onclick="document.querySelector('#productCarousel .carousel-control-next').click();">
+                                <img src="@imagen.Url" 
+                                     alt="Miniatura @(indice + 1)" 
+                                     class="thumbnail-item"
+                                     loading="lazy"
+                                     decoding="async">
+                            </div>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="sin-imagenes">
+                    <i class="bi bi-image"></i>
+                    <p class="text-muted">Sin imágenes disponibles</p>
+                </div>
+            }
+        </div>
+
+        <!-- Botones de Acción para Propietario -->
+        @if (puedeEditar)
+        {
+            <div class="mt-3 d-grid gap-2">
+                <a asp-action="Edit" asp-controller="Productos" asp-route-id="@Model.ProductoId" 
+                   class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Editar Producto
+                </a>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="bi bi-trash"></i> Eliminar Producto
+                </button>
+            </div>
+
+            <!-- Modal Confirmación Eliminación -->
+            <div class="modal fade" id="deleteModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Eliminar Producto</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>¿Está seguro que desea eliminar este producto? Esta acción no se puede deshacer.</p>
+                            <p class="text-muted small">Producto: <strong>@Model.Nombre</strong></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <form method="post" asp-action="Delete" asp-controller="Productos" 
+                                  asp-route-id="@Model.ProductoId" style="display: inline;">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Columna Derecha - Información -->
+    <div class="col-lg-6">
+        <!-- Estado Producto -->
+        <div class="mb-3">
+            @if (Model.StockDisponible)
+            {
+                <span class="badge bg-success fs-6">
+                    <i class="bi bi-check-circle"></i> Disponible
+                </span>
+            }
+            else
+            {
+                <span class="badge bg-danger fs-6">
+                    <i class="bi bi-x-circle"></i> Agotado
+                </span>
+            }
+        </div>
+
+        <!-- Nombre -->
+        <h1 class="mb-2">@Model.Nombre</h1>
+
+        <!-- Categoría -->
+        <p class="text-muted mb-3">
+            <i class="bi bi-tag"></i> 
+            <a asp-controller="Productos" asp-action="Index" 
+               asp-route-categoriaId="@Model.CategoriaId" 
+               class="text-decoration-none">
+                @Model.CategoriaNombre
+            </a>
+        </p>
+
+        <!-- Calificación -->
+        <div class="mb-3 pb-3 border-bottom">
+            @if (Model.NumeroResenas > 0)
+            {
+                <div>
+                    @for (int i = 0; i < (int)(Model.CalificacionPromedio ?? 0); i++)
+                    {
+                        <i class="bi bi-star-fill text-warning"></i>
+                    }
+                    @for (int i = (int)(Model.CalificacionPromedio ?? 0); i < 5; i++)
+                    {
+                        <i class="bi bi-star text-warning"></i>
+                    }
+                    <span class="ms-2 text-muted">
+                        @Model.CalificacionPromedio?.ToString("N1") / 5.0 
+                        (@Model.NumeroResenas reseña@(Model.NumeroResenas != 1 ? "s" : ""))
+                    </span>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">Sin reseñas aún</p>
+            }
+        </div>
+
+        <!-- Precio -->
+        <div class="mb-4">
+            <h2 class="text-primary mb-2">@Model.Precio.ToString("C")</h2>
+            <p class="text-muted small">
+                <i class="bi bi-info-circle"></i> Precio sin envío
+            </p>
+        </div>
+
+        <!-- Stock -->
+        <div class="mb-4">
+            @if (Model.StockDisponible && Model.Stock > 0)
+            {
+                <div class="alert alert-success mb-3">
+                    <i class="bi bi-box2"></i> 
+                    <strong>? Stock Disponible:</strong> <span class="badge bg-success fs-6">@Model.Stock unidades</span>
+                </div>
+                
+                @if (Model.Stock < 10)
+                {
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>¡Quedan pocas unidades!</strong> Solo @Model.Stock disponibles
+                    </div>
+                }
+                
+                <!-- Indicador Visual de Stock -->
+                <div class="mb-2">
+                    <small class="text-muted d-block mb-2">Disponibilidad:</small>
+                    <div class="progress" style="height: 25px;">
+                        @{
+                            int porcentaje = Model.Stock > 100 ? 100 : Model.Stock;
+                            string colorStock = porcentaje >= 50 ? "bg-success" : (porcentaje >= 20 ? "bg-warning" : "bg-danger");
+                        }
+                        <div class="progress-bar @colorStock" role="progressbar" style="width: @porcentaje%" 
+                             aria-valuenow="@porcentaje" aria-valuemin="0" aria-valuemax="100">
+                            @porcentaje%
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger mb-3">
+                    <i class="bi bi-exclamation-circle-fill"></i> 
+                    <strong>?? Producto Agotado</strong>
+                </div>
+            }
+        </div>
+
+        <!-- Información del Vendedor -->
+        <div class="card mb-4 border-primary">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0"><i class="bi bi-shop"></i> Vendedor</h6>
+            </div>
+            <div class="card-body">
+                <p class="mb-2">
+                    <strong>@Model.VendedorNombre</strong>
+                </p>
+                <p class="text-muted small mb-0">
+                    Visualizaciones: <strong>@Model.NumeroVisualizaciones</strong>
+                </p>
+                <p class="text-muted small">
+                    Desde: <strong>@Model.FechaCreacion.ToString("dd/MM/yyyy")</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- Botón Agregar al Carrito -->
+        @if (Model.StockDisponible)
+        {
+            <form method="post" asp-action="Agregar" asp-controller="Carrito" class="mb-3">
+                <input type="hidden" name="productoId" value="@Model.ProductoId" />
+                <div class="input-group mb-3">
+                    <input type="number" name="cantidad" min="1" max="@Model.Stock" value="1" 
+                           class="form-control" placeholder="Cantidad">
+                    <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                        <i class="bi bi-cart-plus"></i> Agregar al Carrito
+                    </button>
+                </div>
+            </form>
+        }
+        else
+        {
+            <button class="btn btn-secondary w-100 btn-lg mb-3" disabled>
+                <i class="bi bi-x-circle"></i> Producto Agotado
+            </button>
+        }
+
+        <!-- Más Información -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-info-circle"></i> Información Adicional</h6>
+            </div>
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(Model.SKU))
+                {
+                    <p class="mb-2">
+                        <strong>SKU:</strong> <code>@Model.SKU</code>
+                    </p>
+                }
+                <p class="mb-2">
+                    <strong>Estado del Producto:</strong> @Model.Estado
+                </p>
+                <p class="mb-0">
+                    <strong>Última Actualización:</strong> 
+                    @(Model.FechaCreacion.AddHours(-5).ToString("dd/MM/yyyy HH:mm"))
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Descripción del Producto -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-file-text"></i> Descripción del Producto</h5>
+            </div>
+            <div class="card-body">
+                <p>@Html.Raw(Model.Descripcion.Replace("\n", "<br />"))</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Productos Relacionados (Mismo Vendedor) -->
+<div class="row mt-4">
+    <div class="col-12">
+        <h4 class="mb-3"><i class="bi bi-shuffle"></i> Otros productos del vendedor</h4>
+        <p class="text-muted">Próximamente...</p>
+    </div>
+</div>
+
+<!-- NUEVA SECCIÓN: RESEÑAS Y COMENTARIOS -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h4 class="mb-4"><i class="bi bi-chat-left-quote"></i> Reseñas y Comentarios</h4>
+    </div>
+</div>
+
+<!-- Resumen de Reseñas -->
+@if (Model.Resenas.Any() || Model.NumeroResenas > 0)
+{
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h3 class="mb-2">@(Model.CalificacionPromedio?.ToString("N1") ?? "N/A")</h3>
+                    <div class="mb-2">
+                        @for (int i = 0; i < (int)(Model.CalificacionPromedio ?? 0); i++)
+                        {
+                            <i class="bi bi-star-fill text-warning"></i>
+                        }
+                        @for (int i = (int)(Model.CalificacionPromedio ?? 0); i < 5; i++)
+                        {
+                            <i class="bi bi-star text-warning"></i>
+                        }
+                    </div>
+                    <p class="text-muted small">@Model.NumeroResenas reseña@(Model.NumeroResenas != 1 ? "s" : "")</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Distribución de Calificaciones -->
+        @if (Model.EstadisticasResenas != null)
+        {
+            <div class="col-md-9">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        @for (int i = 5; i >= 1; i--)
+                        {
+                            var cantidad = Model.EstadisticasResenas.DistribucionEstrellas.ContainsKey(i) 
+                                ? Model.EstadisticasResenas.DistribucionEstrellas[i] 
+                                : 0;
+                            var porcentaje = Model.NumeroResenas > 0 
+                                ? (int)((double)cantidad / Model.NumeroResenas * 100) 
+                                : 0;
+
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center mb-1">
+                                    @for (int j = 0; j < i; j++)
+                                    {
+                                        <i class="bi bi-star-fill text-warning" style="font-size: 0.8rem;"></i>
+                                    }
+                                    <span class="ms-2 small text-muted">@cantidad</span>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-warning" style="width: @porcentaje%"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<!-- Formulario para Escribir Reseña -->
+@if (User.Identity?.IsAuthenticated == true && !Model.UsuarioYaReseno)
+{
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="bi bi-pencil-square"></i> Escribe tu Reseña</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CrearResena" asp-controller="Preguntas" method="post">
+                        <input type="hidden" name="productoId" value="@Model.ProductoId" />
+
+                        <!-- Título -->
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título de la Reseña</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" 
+                                   placeholder="Ej: Excelente producto, muy recomendado" 
+                                   required maxlength="100" minlength="5">
+                            <small class="form-text text-muted">Entre 5 y 100 caracteres</small>
+                        </div>
+
+                        <!-- Calificación General -->
+                        <div class="mb-3">
+                            <label class="form-label">Calificación General</label>
+                            <div class="rating-input mb-2">
+                                <input type="hidden" id="calificacionGeneral" name="calificacionGeneral" value="0" />
+                                <div class="d-flex gap-2">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <button type="button" class="btn btn-outline-warning star-button" 
+                                                data-value="@i" data-target="calificacionGeneral">
+                                            <i class="bi bi-star-fill"></i>
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Selecciona una calificación</small>
+                        </div>
+
+                        <!-- Calificación de Atención -->
+                        <div class="mb-3">
+                            <label class="form-label">Calificación de Atención del Vendedor</label>
+                            <div class="rating-input mb-2">
+                                <input type="hidden" id="calificacionAtencion" name="calificacionAtencion" value="0" />
+                                <div class="d-flex gap-2">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <button type="button" class="btn btn-outline-info star-button" 
+                                                data-value="@i" data-target="calificacionAtencion">
+                                            <i class="bi bi-star-fill"></i>
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">¿Cómo fue la atención del vendedor?</small>
+                        </div>
+
+                        <!-- Calificación de Envío -->
+                        <div class="mb-3">
+                            <label class="form-label">Calificación del Envío</label>
+                            <div class="rating-input mb-2">
+                                <input type="hidden" id="calificacionEnvio" name="calificacionEnvio" value="0" />
+                                <div class="d-flex gap-2">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <button type="button" class="btn btn-outline-success star-button" 
+                                                data-value="@i" data-target="calificacionEnvio">
+                                            <i class="bi bi-star-fill"></i>
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">¿Qué tal fue el tiempo de entrega?</small>
+                        </div>
+
+                        <!-- Comentario -->
+                        <div class="mb-3">
+                            <label for="comentario" class="form-label">Tu Comentario</label>
+                            <textarea class="form-control" id="comentario" name="comentario" rows="4" 
+                                      placeholder="Cuéntanos tu experiencia con este producto y el vendedor..." 
+                                      required minlength="10" maxlength="500"></textarea>
+                            <small class="form-text text-muted">Entre 10 y 500 caracteres</small>
+                            <div class="form-text mt-1">
+                                <span id="charCount">0</span> / 500 caracteres
+                            </div>
+                        </div>
+
+                        <!-- Botón Enviar -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-send"></i> Enviar Reseña
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else if (User.Identity?.IsAuthenticated == true && Model.UsuarioYaReseno)
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        <strong>Ya escribiste una reseña</strong> para este producto. Solo puedes escribir una reseña por producto.
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle"></i>
+        <strong>Inicia sesión</strong> para escribir una reseña y compartir tu experiencia con otros compradores.
+        <a href="@Url.Action("Login", "Account")" class="alert-link">Iniciar sesión</a>
+    </div>
+}
+
+<!-- Lista de Reseñas -->
+@if (Model.Resenas.Any())
+{
+    <div class="row mt-4">
+        <div class="col-12">
+            <h5 class="mb-3"><i class="bi bi-chat-dots"></i> Reseñas de Clientes (@Model.Resenas.Count)</h5>
+
+            @foreach (var resena in Model.Resenas.OrderByDescending(r => r.FechaCreacion))
+            {
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body">
+                        <!-- Encabezado de Reseña -->
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1">@resena.Titulo</h6>
+                                <p class="text-muted small mb-2">
+                                    Por <strong>@resena.UsuarioNombre</strong> 
+                                    el @resena.FechaCreacion.ToString("dd/MM/yyyy HH:mm")
+                                </p>
+                            </div>
+                            @if (resena.EsDelUsuarioActual)
+                            {
+                                <span class="badge bg-success">Tu Reseña</span>
+                            }
+                        </div>
+
+                        <!-- Calificación General -->
+                        <div class="mb-2">
+                            <div>
+                                @for (int i = 0; i < resena.Puntaje; i++)
+                                {
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                }
+                                @for (int i = resena.Puntaje; i < 5; i++)
+                                {
+                                    <i class="bi bi-star text-warning"></i>
+                                }
+                                <span class="ms-2 text-muted small">@resena.Puntaje.0 / 5.0</span>
+                            </div>
+                        </div>
+
+                        <!-- Calificaciones Secundarias -->
+                        @if (resena.CalificacionAtencion.HasValue || resena.CalificacionEnvio.HasValue)
+                        {
+                            <div class="mb-3 p-2" style="background-color: #f8f9fa; border-radius: 0.25rem;">
+                                @if (resena.CalificacionAtencion.HasValue)
+                                {
+                                    <small class="d-block mb-1">
+                                        <i class="bi bi-person-check text-primary"></i>
+                                        <strong>Atención:</strong>
+                                        @for (int i = 0; i < resena.CalificacionAtencion; i++)
+                                        {
+                                            <i class="bi bi-star-fill text-info" style="font-size: 0.7rem;"></i>
+                                        }
+                                        @for (int i = resena.CalificacionAtencion.Value; i < 5; i++)
+                                        {
+                                            <i class="bi bi-star text-info" style="font-size: 0.7rem;"></i>
+                                        }
+                                    </small>
+                                }
+                                @if (resena.CalificacionEnvio.HasValue)
+                                {
+                                    <small class="d-block">
+                                        <i class="bi bi-truck text-success"></i>
+                                        <strong>Envío:</strong>
+                                        @for (int i = 0; i < resena.CalificacionEnvio; i++)
+                                        {
+                                            <i class="bi bi-star-fill text-success" style="font-size: 0.7rem;"></i>
+                                        }
+                                        @for (int i = resena.CalificacionEnvio.Value; i < 5; i++)
+                                        {
+                                            <i class="bi bi-star text-success" style="font-size: 0.7rem;"></i>
+                                        }
+                                    </small>
+                                }
+                            </div>
+                        }
+
+                        <!-- Comentario -->
+                        <p class="mb-0">@resena.Comentario</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-light mt-4">
+        <i class="bi bi-chat-dots"></i>
+        <strong>Sin reseñas aún.</strong> Sé el primero en compartir tu experiencia con este producto.
+    </div>
+}
+
+<!-- Scripts para Star Rating -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Manejo de estrellas para calificación
+        const starButtons = document.querySelectorAll('.star-button');
+        
+        starButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                const value = parseInt(this.getAttribute('data-value'));
+                const target = this.getAttribute('data-target');
+                
+                // Establecer valor en input hidden
+                document.getElementById(target).value = value;
+                
+                // Actualizar visual de botones
+                const container = this.closest('.d-flex');
+                const buttonsInGroup = container.querySelectorAll('.star-button');
+                
+                buttonsInGroup.forEach((btn, index) => {
+                    if (index < value) {
+                        btn.classList.remove('btn-outline-warning', 'btn-outline-info', 'btn-outline-success');
+                        if (target === 'calificacionGeneral') {
+                            btn.classList.add('btn-warning');
+                        } else if (target === 'calificacionAtencion') {
+                            btn.classList.add('btn-info');
+                        } else {
+                            btn.classList.add('btn-success');
+                        }
+                    } else {
+                        btn.classList.remove('btn-warning', 'btn-info', 'btn-success');
+                        if (target === 'calificacionGeneral') {
+                            btn.classList.add('btn-outline-warning');
+                        } else if (target === 'calificacionAtencion') {
+                            btn.classList.add('btn-outline-info');
+                        } else {
+                            btn.classList.add('btn-outline-success');
+                        }
+                    }
+                });
+            });
+        });
+
+        // Contador de caracteres en comentario
+        const comentarioInput = document.getElementById('comentario');
+        if (comentarioInput) {
+            comentarioInput.addEventListener('input', function () {
+                document.getElementById('charCount').textContent = this.value.length;
+            });
+        }
+    });
+</script>
+
+<style>
+    .star-button {
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .star-button:hover {
+        transform: scale(1.1);
+    }
+
+    .rating-input {
+        user-select: none;
+    }
+</style>

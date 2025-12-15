@@ -1,0 +1,172 @@
+@model List<NexShop.Web.ViewModels.ProductoListViewModel>
+
+@{
+    ViewData["Title"] = "Mis Productos";
+}
+
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1><i class="bi bi-box-seam"></i> Mis Productos</h1>
+        </div>
+        <div class="col-auto">
+            <a href="@Url.Action("Create", "Productos")" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Nuevo Producto
+            </a>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center py-5">
+            <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+            <p class="mt-3">No tienes productos aun</p>
+            <a href="@Url.Action("Create", "Productos")" class="btn btn-success mt-2">
+                <i class="bi bi-plus-circle"></i> Crear Primer Producto
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Categoria</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Estado</th>
+                        <th>Visualizaciones</th>
+                        <th>Calificacion</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var producto in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(producto.ImagenPrincipal))
+                                {
+                                    <img src="@producto.ImagenPrincipal" alt="@producto.Nombre" 
+                                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                }
+                                else
+                                {
+                                    <div style="width: 50px; height: 50px; background-color: #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="bi bi-image text-muted"></i>
+                                    </div>
+                                }
+                            </td>
+                            <td><strong>@producto.Nombre</strong></td>
+                            <td>@producto.CategoriaNombre</td>
+                            <td>$@producto.Precio.ToString("F2")</td>
+                            <td>
+                                @if (producto.Stock > 10)
+                                {
+                                    <span class="badge bg-success">@producto.Stock</span>
+                                }
+                                else if (producto.Stock > 0)
+                                {
+                                    <span class="badge bg-warning">@producto.Stock</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Agotado</span>
+                                }
+                            </td>
+                            <td>
+                                @if (producto.Estado == "Disponible")
+                                {
+                                    <span class="badge bg-success">@producto.Estado</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">@producto.Estado</span>
+                                }
+                            </td>
+                            <td>@producto.NumeroVisualizaciones</td>
+                            <td>
+                                @if (producto.NumeroResenas > 0)
+                                {
+                                    <div>
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        <span>@(producto.CalificacionPromedio?.ToString("F1") ?? "0.0")</span>
+                                        <small class="text-muted">(@producto.NumeroResenas)</small>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <small class="text-muted">Sin resenas</small>
+                                }
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="@Url.Action("Details", "Productos", new { id = producto.ProductoId })" class="btn btn-info" title="Ver">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Edit", "Productos", new { id = producto.ProductoId })" class="btn btn-warning" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", "Productos", new { id = producto.ProductoId })" class="btn btn-danger" title="Eliminar">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginacion -->
+        @if ((int)ViewBag.TotalPaginas > 1)
+        {
+            <nav aria-label="Paginacion" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    @if ((int)ViewBag.PaginaActual > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("MisProductos", "Usuarios", new { pagina = (int)ViewBag.PaginaActual - 1 })">
+                                Anterior
+                            </a>
+                        </li>
+                    }
+
+                    @for (int i = 1; i <= (int)ViewBag.TotalPaginas; i++)
+                    {
+                        @if (i == (int)ViewBag.PaginaActual)
+                        {
+                            <li class="page-item active">
+                                <span class="page-link">@i</span>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("MisProductos", "Usuarios", new { pagina = i })">@i</a>
+                            </li>
+                        }
+                    }
+
+                    @if ((int)ViewBag.PaginaActual < (int)ViewBag.TotalPaginas)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("MisProductos", "Usuarios", new { pagina = (int)ViewBag.PaginaActual + 1 })">
+                                Siguiente
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    }
+
+    <div class="mt-4">
+        <a href="@Url.Action("Dashboard", "Usuarios")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+</div>

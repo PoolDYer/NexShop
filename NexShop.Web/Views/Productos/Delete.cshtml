@@ -1,0 +1,92 @@
+@model ProductoDetailViewModel
+@{
+    ViewData["Title"] = "Eliminar Producto";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0"><i class="bi bi-trash"></i> Eliminar Producto</h4>
+            </div>
+            <div class="card-body p-4">
+                <!-- Advertencia -->
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <strong>¡Advertencia!</strong> Esta acción no se puede deshacer.
+                </div>
+
+                <!-- Información del Producto -->
+                <div class="card bg-light mb-4">
+                    <div class="card-body">
+                        <h6 class="card-title">Producto a Eliminar:</h6>
+                        <p class="mb-0">
+                            <strong>@Model.Nombre</strong>
+                        </p>
+                        <small class="text-muted">ID: @Model.ProductoId</small>
+                    </div>
+                </div>
+
+                <!-- Detalles del Producto -->
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-2">Detalles:</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <strong>Categoría:</strong> @Model.CategoriaNombre
+                        </li>
+                        <li class="mb-2">
+                            <strong>Precio:</strong> @Model.Precio.ToString("C")
+                        </li>
+                        <li class="mb-2">
+                            <strong>Stock:</strong> @Model.Stock unidades
+                        </li>
+                        <li class="mb-2">
+                            <strong>Estado:</strong> @Model.Estado
+                        </li>
+                        <li class="mb-2">
+                            <strong>Visualizaciones:</strong> @Model.NumeroVisualizaciones
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Confirmación -->
+                <div class="alert alert-warning mb-4">
+                    <i class="bi bi-info-circle"></i> 
+                    Al eliminar este producto también se eliminarán todas sus imágenes, videos y asociaciones con órdenes.
+                </div>
+
+                <!-- Formulario -->
+                <form method="post" asp-action="DeleteConfirmed" asp-controller="Productos" 
+                      asp-route-id="@Model.ProductoId">
+                    <!-- Checkbox de Confirmación -->
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="confirm" required>
+                        <label class="form-check-label" for="confirm">
+                            Confirmo que deseo <strong>eliminar permanentemente</strong> este producto
+                        </label>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg" id="deleteBtn" disabled>
+                            <i class="bi bi-trash"></i> Eliminar Producto
+                        </button>
+                        <a asp-action="Details" asp-controller="Productos" 
+                           asp-route-id="@Model.ProductoId" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Habilitar botón solo si se confirma
+        document.getElementById('confirm').addEventListener('change', function() {
+            document.getElementById('deleteBtn').disabled = !this.checked;
+        });
+    </script>
+}

@@ -1,0 +1,44 @@
+/* Home Page Responsive Styles */
+
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 400px;
+        padding: 60px 20px !important;
+    }
+
+    .display-3 {
+        font-size: 2rem !important;
+    }
+
+    .lead {
+        font-size: 1rem !important;
+    }
+
+    .display-5 {
+        font-size: 1.8rem !important;
+    }
+
+    .btn-lg {
+        padding: 10px 20px !important;
+        font-size: 0.95rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-section {
+        min-height: 300px;
+        padding: 40px 15px !important;
+    }
+
+    .display-3 {
+        font-size: 1.5rem !important;
+    }
+
+    .lead {
+        font-size: 0.9rem !important;
+    }
+
+    .display-5 {
+        font-size: 1.3rem !important;
+    }
+}

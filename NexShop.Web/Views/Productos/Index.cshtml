@@ -1,0 +1,450 @@
+﻿@model List<ProductoListViewModel>
+@{
+    ViewData["Title"] = "Productos";
+    int categoriaId = (int?)ViewBag.CategoriaId ?? 0;
+    string busqueda = ViewBag.Busqueda ?? "";
+    int paginaActual = ViewBag.PaginaActual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 1;
+    List<CategoriaSelectViewModel> categorias = ViewBag.Categorias ?? new List<CategoriaSelectViewModel>();
+}
+
+<link rel="stylesheet" href="~/css/galeria-productos-responsive.css" />
+
+<div class="row">
+    <!-- Sidebar Filtros -->
+    <div class="col-lg-3 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-funnel"></i> Filtros</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" asp-action="Index" asp-controller="Productos">
+                    <!-- Búsqueda -->
+                    <div class="mb-3">
+                        <label for="busqueda" class="form-label fw-bold">Buscar Producto</label>
+                        <input type="text" class="form-control" id="busqueda" name="busqueda" 
+                               placeholder="Nombre, descripción..." value="@busqueda">
+                    </div>
+
+                    <!-- Categorías -->
+                    <div class="mb-3">
+                        <label for="categoriaId" class="form-label fw-bold">Categoría</label>
+                        <select class="form-select" id="categoriaId" name="categoriaId">
+                            <option value="0">Todas las categorías</option>
+                            @foreach (var cat in categorias)
+                            {
+                                <option value="@cat.CategoriaId" selected="@(categoriaId == cat.CategoriaId)">
+                                    @cat.Nombre
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Pagination Page -->
+                    <input type="hidden" name="pagina" value="1" />
+
+                    <!-- Buttons -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                        <a href="@Url.Action("Index", "Productos")" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-clockwise"></i> Limpiar
+                        </a>
+                    </div>
+                </form>
+
+                <!-- Admin Actions -->
+                @if (User.IsInRole("Vendedor") || User.IsInRole("Admin"))
+                {
+                    <hr />
+                    <div class="d-grid gap-2">
+                        <a asp-action="Create" asp-controller="Productos" class="btn btn-success btn-sm">
+                            <i class="bi bi-plus-circle"></i> Crear Producto
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Información -->
+        <div class="card shadow-sm mt-3">
+            <div class="card-body">
+                <h6 class="fw-bold mb-2"><i class="bi bi-info-circle"></i> Información</h6>
+                <p class="text-muted small mb-0">
+                    Encuentra miles de productos de vendedores verificados. Compra con confianza en NexShop.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-lg-9">
+        <!-- Encabezado con Resultados -->
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h2 class="mb-0">
+                        @if (!string.IsNullOrEmpty(busqueda))
+                        {
+                            <span>Resultados para "<strong>@busqueda</strong>"</span>
+                        }
+                        else if (categoriaId > 0)
+                        {
+                            <span>@(categorias.FirstOrDefault(c => c.CategoriaId == categoriaId)?.Nombre ?? "Productos")</span>
+                        }
+                        else
+                        {
+                            <span>Todos los Productos</span>
+                        }
+                    </h2>
+                </div>
+                <div>
+                    <small class="text-muted">
+                        Página @paginaActual de @totalPaginas
+                    </small>
+                </div>
+            </div>
+
+            <!-- Línea separadora -->
+            <hr class="my-3" />
+        </div>
+
+        <!-- Grid de Productos -->
+        @if (Model.Any())
+        {
+            <div class="productos-grid mb-4">
+                @foreach (var producto in Model)
+                {
+                    <div class="producto-card">
+                        <!-- Imagen del Producto -->
+                        <div class="producto-imagen">
+                            @{
+                                // 🔥 MAPEO ULTRA-ESPECÍFICO - Cada producto a su imagen exacta
+                                var imagenUrl = "";
+                                var imagenAlt = $"Imagen de {producto.Nombre}";
+                                
+                                if (!string.IsNullOrEmpty(producto.ImagenPrincipal))
+                                {
+                                    // Usar imagen principal si existe en BD
+                                    imagenUrl = producto.ImagenPrincipal;
+                                }
+                                else
+                                {
+                                    // 🔥 Mapeo exhaustivo producto por producto
+                                    var nombreLower = producto.Nombre.ToLower();
+                                    var termino = ""; // término específico de Unsplash
+                                    
+                                    // === ELECTRÓNICA ===
+                                    if (nombreLower.Contains("smartphone") || nombreLower.Contains("xyz pro"))
+                                        termino = "smartphone";
+                                    else if (nombreLower.Contains("laptop gaming"))
+                                        termino = "gaming-laptop";
+                                    else if (nombreLower.Contains("tablet") && nombreLower.Contains("10"))
+                                        termino = "tablet";
+                                    else if (nombreLower.Contains("auriculares bluetooth"))
+                                        termino = "wireless-headphones";
+                                    else if (nombreLower.Contains("monitor 4k"))
+                                        termino = "4k-monitor";
+                                    else if (nombreLower.Contains("teclado mecánico"))
+                                        termino = "mechanical-keyboard";
+                                    else if (nombreLower.Contains("ratón gaming") || nombreLower.Contains("mouse"))
+                                        termino = "gaming-mouse";
+                                    else if (nombreLower.Contains("webcam"))
+                                        termino = "webcam";
+                                    else if (nombreLower.Contains("cargador"))
+                                        termino = "usb-charger";
+                                    else if (nombreLower.Contains("powerbank"))
+                                        termino = "powerbank";
+                                    
+                                    // === ROPA ===
+                                    else if (nombreLower.Contains("camiseta") && nombreLower.Contains("blanca"))
+                                        termino = "white-tshirt";
+                                    else if (nombreLower.Contains("jeans") && nombreLower.Contains("azul"))
+                                        termino = "blue-jeans";
+                                    else if (nombreLower.Contains("sudadera") && nombreLower.Contains("capucha"))
+                                        termino = "hoodie";
+                                    else if (nombreLower.Contains("chaqueta") && nombreLower.Contains("cuero"))
+                                        termino = "leather-jacket";
+                                    else if (nombreLower.Contains("pantalones deportivos"))
+                                        termino = "sweatpants";
+                                    else if (nombreLower.Contains("calcetines"))
+                                        termino = "socks";
+                                    else if (nombreLower.Contains("gorro") && nombreLower.Contains("lana"))
+                                        termino = "beanie";
+                                    else if (nombreLower.Contains("bufanda"))
+                                        termino = "scarf";
+                                    else if (nombreLower.Contains("zapatos deportivos"))
+                                        termino = "running-shoes";
+                                    else if (nombreLower.Contains("cinturón") && nombreLower.Contains("cuero"))
+                                        termino = "leather-belt";
+                                    
+                                    // === HOGAR ===
+                                    else if (nombreLower.Contains("sábanas") && nombreLower.Contains("algodón"))
+                                        termino = "bed-sheets";
+                                    else if (nombreLower.Contains("almohada") && nombreLower.Contains("espuma"))
+                                        termino = "pillow";
+                                    else if (nombreLower.Contains("edredón"))
+                                        termino = "comforter";
+                                    else if (nombreLower.Contains("cortinas blackout"))
+                                        termino = "curtains";
+                                    else if (nombreLower.Contains("lámpara") && nombreLower.Contains("escritorio"))
+                                        termino = "desk-lamp";
+                                    else if (nombreLower.Contains("espejo") && nombreLower.Contains("pared"))
+                                        termino = "wall-mirror";
+                                    else if (nombreLower.Contains("alfombra persa"))
+                                        termino = "persian-rug";
+                                    else if (nombreLower.Contains("toallas"))
+                                        termino = "towels";
+                                    else if (nombreLower.Contains("tapete") && nombreLower.Contains("baño"))
+                                        termino = "bath-mat";
+                                    else if (nombreLower.Contains("plantas") && nombreLower.Contains("artificiales"))
+                                        termino = "artificial-plants";
+                                    
+                                    // === DEPORTES ===
+                                    else if (nombreLower.Contains("balón") && nombreLower.Contains("fútbol"))
+                                        termino = "soccer-ball";
+                                    else if (nombreLower.Contains("raqueta") && nombreLower.Contains("tenis"))
+                                        termino = "tennis-racket";
+                                    else if (nombreLower.Contains("pelota") && nombreLower.Contains("baloncesto"))
+                                        termino = "basketball";
+                                    else if (nombreLower.Contains("mancuernas"))
+                                        termino = "dumbbells";
+                                    else if (nombreLower.Contains("colchoneta") && nombreLower.Contains("yoga"))
+                                        termino = "yoga-mat";
+                                    else if (nombreLower.Contains("banda") && nombreLower.Contains("resistencia"))
+                                        termino = "resistance-band";
+                                    else if (nombreLower.Contains("botella") && nombreLower.Contains("agua"))
+                                        termino = "water-bottle";
+                                    else if (nombreLower.Contains("guantes") && nombreLower.Contains("boxeo"))
+                                        termino = "boxing-gloves";
+                                    else if (nombreLower.Contains("cinta métrica"))
+                                        termino = "measuring-tape";
+                                    else if (nombreLower.Contains("uniforme deportivo"))
+                                        termino = "sports-uniform";
+                                    
+                                    // === LIBROS ===
+                                    else if (nombreLower.Contains("quijote") || nombreLower.Contains("cervantes"))
+                                        termino = "classic-books";
+                                    else if (nombreLower.Contains("1984") || nombreLower.Contains("orwell"))
+                                        termino = "dystopian-book";
+                                    else if (nombreLower.Contains("cien años") || nombreLower.Contains("garcía márquez"))
+                                        termino = "literature-book";
+                                    else if (nombreLower.Contains("hábitos atómicos") || nombreLower.Contains("james clear"))
+                                        termino = "self-help-book";
+                                    else if (nombreLower.Contains("alquimista") || nombreLower.Contains("paulo coelho"))
+                                        termino = "inspirational-book";
+                                    else if (nombreLower.Contains("sapiens") || nombreLower.Contains("harari"))
+                                        termino = "history-book";
+                                    else if (nombreLower.Contains("poder del ahora") || nombreLower.Contains("eckhart tolle"))
+                                        termino = "mindfulness-book";
+                                    else if (nombreLower.Contains("revolución") && nombreLower.Contains("creativos"))
+                                        termino = "creativity-book";
+                                    else if (nombreLower.Contains("mindfulness para principiantes"))
+                                        termino = "meditation-book";
+                                    else if (nombreLower.Contains("juego infinito") || nombreLower.Contains("simon sinek"))
+                                        termino = "leadership-book";
+                                    
+                                    // Fallback genérico si no coincide ninguno
+                                    else
+                                        termino = "product";
+                                    
+                                    // Generar URL de Unsplash con término específico
+                                    imagenUrl = $"https://source.unsplash.com/400x400/?{termino}&sig={producto.ProductoId}";
+                                }
+                            }
+                            
+                            <img src="@imagenUrl" 
+                                 alt="@imagenAlt" 
+                                 class="producto-card-imagen"
+                                 loading="lazy"
+                                 decoding="async"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                 style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+                            
+                            <!-- Fallback mejorado con información del producto -->
+                            <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 0.9rem; text-align: center; padding: 1.5rem; flex-direction: column;">
+                                <i class="bi bi-image" style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.8;"></i>
+                                <span style="font-weight: 500;">@(producto.Nombre.Length > 15 ? producto.Nombre.Substring(0, 15) + "..." : producto.Nombre)</span>
+                                <small style="opacity: 0.8; margin-top: 0.25rem;">ID: @producto.ProductoId</small>
+                            </div>
+
+                            <!-- Badge Estado - absoluto -->
+                            <div style="position: absolute; top: 0.5rem; right: 0.5rem; z-index: 10;">
+                                @if (producto.Estado == "Disponible")
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Disponible
+                                    </span>
+                                }
+                                else if (producto.Estado == "Agotado")
+                                {
+                                    <span class="badge bg-danger">
+                                        <i class="bi bi-x-circle"></i> Agotado
+                                    </span>
+                                }
+                            </div>
+
+                            <!-- Envío Gratis -->
+                            @if (producto.Stock > 10)
+                            {
+                                <div style="position: absolute; bottom: 0.5rem; left: 0.5rem; z-index: 10;">
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-truck"></i> Envío Gratis
+                                    </span>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Contenido del Card -->
+                        <div class="producto-card-body">
+                            <!-- Nombre -->
+                            <h6 class="producto-card-title" title="@producto.Nombre">
+                                <a asp-action="Details" asp-controller="Productos" 
+                                   asp-route-id="@producto.ProductoId" 
+                                   class="text-decoration-none text-dark">
+                                    @producto.Nombre
+                                </a>
+                            </h6>
+
+                            <!-- Calificación -->
+                            @if (producto.NumeroResenas > 0)
+                            {
+                                <div style="font-size: 0.85rem;">
+                                    <small class="text-warning">
+                                        @for (int i = 0; i < (int)(producto.CalificacionPromedio ?? 0); i++)
+                                        {
+                                            <i class="bi bi-star-fill"></i>
+                                        }
+                                        @for (int i = (int)(producto.CalificacionPromedio ?? 0); i < 5; i++)
+                                        {
+                                            <i class="bi bi-star"></i>
+                                        }
+                                        <span class="text-muted">(@producto.NumeroResenas)</span>
+                                    </small>
+                                </div>
+                            }
+
+                            <!-- Precio -->
+                            <p class="producto-card-price">
+                                @producto.Precio.ToString("C")
+                            </p>
+
+                            <!-- Stock -->
+                            <p class="producto-card-stock">
+                                Stock: @producto.Stock unidades
+                            </p>
+
+                            <!-- Botón Ver -->
+                            <a asp-action="Details" asp-controller="Productos" 
+                               asp-route-id="@producto.ProductoId" 
+                               class="btn btn-sm btn-primary mt-auto w-100">
+                                <i class="bi bi-eye"></i> Ver Detalle
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Paginación -->
+            @if (totalPaginas > 1)
+            {
+                <nav aria-label="Paginación">
+                    <ul class="pagination justify-content-center">
+                        <!-- Anterior -->
+                        <li class="page-item @(paginaActual == 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "Productos", new { categoriaId = categoriaId, busqueda = busqueda, pagina = paginaActual - 1 })">
+                                Anterior
+                            </a>
+                        </li>
+
+                        <!-- Números de Página -->
+                        @{
+                            int inicio = Math.Max(1, paginaActual - 2);
+                            int fin = Math.Min(totalPaginas, paginaActual + 2);
+                        }
+                        @for (int i = inicio; i <= fin; i++)
+                        {
+                            <li class="page-item @(i == paginaActual ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", "Productos", new { categoriaId = categoriaId, busqueda = busqueda, pagina = i })">
+                                    @i
+                                </a>
+                            </li>
+                        }
+
+                        <!-- Siguiente -->
+                        <li class="page-item @(paginaActual == totalPaginas ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "Productos", new { categoriaId = categoriaId, busqueda = busqueda, pagina = paginaActual + 1 })">
+                                Siguiente
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            }
+        }
+        else
+        {
+            <!-- Sin Resultados -->
+            <div class="alert alert-info" role="alert">
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">No se encontraron productos</h5>
+                    <p class="text-muted">Intenta con otros criterios de búsqueda o categoría</p>
+                    <a href="@Url.Action("Index", "Productos")" class="btn btn-primary mt-2">
+                        Ver todos los productos
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Mejorar efecto hover con transformación suave
+        document.querySelectorAll('.producto-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.boxShadow = '0 0.75rem 1.5rem rgba(0, 0, 0, 0.15)';
+                this.style.transform = 'translateY(-3px)';
+                this.style.transition = 'all 0.3s ease';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.boxShadow = '';
+                this.style.transform = '';
+            });
+        });
+
+        // 🔥 MEJORADO: Manejar errores de imágenes con retry y fallback inteligente
+        document.querySelectorAll('.producto-card-imagen').forEach(img => {
+            let retryCount = 0;
+            const maxRetries = 2;
+            
+            img.addEventListener('error', function() {
+                retryCount++;
+                console.log(`Error cargando imagen (intento ${retryCount}):`, this.src);
+                
+                if (retryCount <= maxRetries) {
+                    // Intentar con Picsum como fallback
+                    const productoId = this.closest('.producto-card').querySelector('.producto-card-title a').href.split('/').pop();
+                    this.src = `https://picsum.photos/seed/${productoId}/400/400`;
+                } else {
+                    // Mostrar fallback visual después de todos los intentos
+                    this.style.display = 'none';
+                    const fallback = this.nextElementSibling;
+                    if (fallback) {
+                        fallback.style.display = 'flex';
+                    }
+                }
+            });
+            
+            // Añadir clase de loading mientras carga
+            img.addEventListener('loadstart', function() {
+                this.closest('.producto-imagen').classList.add('loading');
+            });
+            
+            img.addEventListener('load', function() {
+                this.closest('.producto-imagen').classList.remove('loading');
+            });
+        });
+    </script>
+}

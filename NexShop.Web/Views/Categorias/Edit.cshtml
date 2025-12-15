@@ -1,0 +1,85 @@
+@model CategoriaEditViewModel
+@using NexShop.Web.ViewModels
+
+@{
+    ViewData["Title"] = "Editar Categoría";
+}
+
+<div class="container-lg py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0"><i class="bi bi-pencil"></i> Editar Categoría</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" asp-action="Edit" novalidate>
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger">
+                                <strong>Error en el formulario:</strong>
+                                @foreach (var modelState in ViewData.ModelState.Values)
+                                {
+                                    @foreach (var error in modelState.Errors)
+                                    {
+                                        <div>@error.ErrorMessage</div>
+                                    }
+                                }
+                            </div>
+                        }
+
+                        <input type="hidden" asp-for="CategoriaId">
+
+                        <!-- Nombre -->
+                        <div class="mb-3">
+                            <label asp-for="Nombre" class="form-label fw-bold">Nombre de la Categoría *</label>
+                            <input asp-for="Nombre" class="form-control" required>
+                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="mb-3">
+                            <label asp-for="Descripcion" class="form-label fw-bold">Descripción</label>
+                            <textarea asp-for="Descripcion" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Icono -->
+                        <div class="mb-3">
+                            <label asp-for="IconoUrl" class="form-label fw-bold">Icono (Bootstrap Icon)</label>
+                            <input asp-for="IconoUrl" class="form-control">
+                            <small class="text-muted d-block mt-1">
+                                Ver en: <a href="https://icons.getbootstrap.com" target="_blank">Bootstrap Icons</a>
+                            </small>
+                            <span asp-validation-for="IconoUrl" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Estado -->
+                        <div class="mb-3 form-check">
+                            <input asp-for="EstaActiva" class="form-check-input">
+                            <label asp-for="EstaActiva" class="form-check-label">
+                                Categoría activa
+                            </label>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-circle"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

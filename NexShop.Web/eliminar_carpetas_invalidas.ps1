@@ -1,0 +1,111 @@
+# Eliminar todas las carpetas genéricas y dejar solo productos reales conocidos
+
+$basePath = "E:\Proyectos Visual\NexShop\NexShop.Web\wwwroot\uploads\productos"
+
+Write-Host "??????????????????????????????????????????????????????????????????" -ForegroundColor Cyan
+Write-Host "?  LIMPIAR CARPETAS - MANTENER SOLO PRODUCTOS REALES           ?" -ForegroundColor Cyan
+Write-Host "??????????????????????????????????????????????????????????????????" -ForegroundColor Cyan
+Write-Host ""
+
+# Producto conocido: ID 49 = "Mindfulness para Principiantes"
+$productosValidos = @{
+    49 = "Mindfulness para Principiantes"
+}
+
+# Obtener carpetas actuales
+$carpetasActuales = Get-ChildItem -Path $basePath -Directory | Select-Object -ExpandProperty Name | Sort-Object
+
+Write-Host "?? Carpetas actuales: $($carpetasActuales.Count)" -ForegroundColor Yellow
+Write-Host ""
+
+# Clasificar carpetas
+$carpetasValidas = @()
+$carpetasAEliminar = @()
+$carpetasARenombrar = @()
+
+foreach ($carpeta in $carpetasActuales) {
+    $parts = $carpeta -split "_", 2
+    
+    if ($parts[0] -match "^\d+$") {
+        $id = [int]$parts[0]
+        
+        if ($productosValidos.ContainsKey($id)) {
+            # Es un producto válido
+            $nombreEsperado = "$id`_$($productosValidos[$id])"
+            
+            if ($carpeta -eq $nombreEsperado) {
+                $carpetasValidas += $carpeta
+            } else {
+                $carpetasARenombrar += @{
+                    actual = $carpeta
+                    esperado = $nombreEsperado
+                }
+            }
+        } else {
+            # Producto desconocido - eliminar
+            $carpetasAEliminar += $carpeta
+        }
+    } else {
+        # Formato inválido - eliminar
+        $carpetasAEliminar += $carpeta
+    }
+}
+
+# Resumen
+Write-Host "???????????????????????????????????????????????????????????????" -ForegroundColor Green
+Write-Host "RESUMEN:" -ForegroundColor Green
+Write-Host "???????????????????????????????????????????????????????????????" -ForegroundColor Green
+Write-Host ""
+
+Write-Host "? Carpetas válidas (a mantener):  $($carpetasValidas.Count)" -ForegroundColor Green
+Write-Host "??  Carpetas a renombrar:           $($carpetasARenombrar.Count)" -ForegroundColor Yellow
+Write-Host "???  Carpetas a eliminar:            $($carpetasAEliminar.Count)" -ForegroundColor Red
+Write-Host ""
+
+Write-Host "Ejemplos de carpetas a eliminar:" -ForegroundColor Red
+foreach ($carpeta in $carpetasAEliminar | Select-Object -First 15) {
+    Write-Host "   ? $carpeta"
+}
+if ($carpetasAEliminar.Count -gt 15) {
+    Write-Host "   ... y $($carpetasAEliminar.Count - 15) más"
+}
+Write-Host ""
+
+# Preguntar confirmación
+Write-Host "??  ADVERTENCIA: Se eliminarán $($carpetasAEliminar.Count) carpetas" -ForegroundColor Yellow
+Write-Host "Esta operación NO se puede deshacer" -ForegroundColor Yellow
+Write-Host ""
+
+$respuesta = Read-Host "¿Estás seguro? Escribe 'SI, ELIMINAR' para continuar"
+
+if ($respuesta -eq "SI, ELIMINAR") {
+    Write-Host ""
+    Write-Host "Eliminando carpetas..." -ForegroundColor Yellow
+    Write-Host ""
+    
+    $eliminadas = 0
+    $errores = 0
+    
+    foreach ($carpeta in $carpetasAEliminar) {
+        try {
+            $ruta = Join-Path $basePath $carpeta
+            Remove-Item $ruta -Recurse -Force -ErrorAction Stop
+            Write-Host "???  $carpeta" -ForegroundColor Red
+            $eliminadas++
+        }
+        catch {
+            Write-Host "? Error: $carpeta - $_" -ForegroundColor DarkRed
+            $errores++
+        }
+    }
+    
+    Write-Host ""
+    Write-Host "???????????????????????????????????????????????????????????????" -ForegroundColor Green
+    Write-Host "? PROCESO COMPLETADO:" -ForegroundColor Green
+    Write-Host "   • Eliminadas: $eliminadas" -ForegroundColor Green
+    Write-Host "   • Errores: $errores" -ForegroundColor DarkYellow
+    Write-Host "???????????????????????????????????????????????????????????????" -ForegroundColor Green
+} else {
+    Write-Host ""
+    Write-Host "Operación cancelada" -ForegroundColor Yellow
+}

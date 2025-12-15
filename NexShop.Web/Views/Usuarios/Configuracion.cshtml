@@ -1,0 +1,159 @@
+@model NexShop.Web.Controllers.EditarPerfilViewModel
+
+@{
+    ViewData["Title"] = "Configuracion";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <h1 class="mb-4"><i class="bi bi-sliders"></i> Configuracion</h1>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-circle"></i> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <form method="post" asp-action="Configuracion" class="needs-validation" novalidate>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Informacion Personal</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="NombreCompleto" class="form-label fw-bold">Nombre Completo *</label>
+                            <input asp-for="NombreCompleto" class="form-control" placeholder="Tu nombre completo" required>
+                            <span asp-validation-for="NombreCompleto" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email (No puede ser cambiado)</label>
+                            <input type="email" class="form-control" value="@Model.Email" disabled>
+                            <small class="text-muted">Tu email es tu identificador de usuario y no puede ser modificado</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PhoneNumber" class="form-label fw-bold">Telefono</label>
+                            <input asp-for="PhoneNumber" class="form-control" placeholder="+1 (234) 567-8900" type="tel">
+                            <small class="text-muted">Formato: +1 (234) 567-8900 o similar</small>
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Direccion" class="form-label fw-bold">Direccion</label>
+                            <input asp-for="Direccion" class="form-control" placeholder="Calle numero, ciudad, pais">
+                            <small class="text-muted">Tu dirección de envío principal</small>
+                            <span asp-validation-for="Direccion" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tipo de Usuario</label>
+                            <input type="text" class="form-control" value="@Model.TipoUsuario" disabled>
+                            <small class="text-muted">No puede ser cambiado despues de registrarse. Contacta a soporte si necesitas cambiar tu tipo</small>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.TipoUsuario == "Vendedor")
+                {
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Informacion de Vendedor</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label asp-for="Descripcion" class="form-label fw-bold">Descripcion de tu Tienda</label>
+                                <textarea asp-for="Descripcion" class="form-control" rows="4" placeholder="Cuéntales a tus clientes sobre ti y tu negocio..."></textarea>
+                                <small class="text-muted">Maximo 500 caracteres. Esta descripción se mostrará en tu perfil de vendedor</small>
+                                <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="bi bi-shield-lock"></i> Seguridad</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Para cambiar tu contraseña, usa el siguiente enlace:</p>
+                        <a href="@Url.Action("CambiarContrasena", "Usuarios")" class="btn btn-warning">
+                            <i class="bi bi-key"></i> Cambiar Contrasena
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-info-circle"></i> Mas Opciones</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2">
+                            <a href="@Url.Action("Perfil", "Usuarios")" class="text-decoration-none">
+                                <i class="bi bi-arrow-right"></i> Ver mi perfil
+                            </a>
+                        </p>
+                        <p class="mb-0">
+                            <a href="@Url.Action("Dashboard", "Usuarios")" class="text-decoration-none">
+                                <i class="bi bi-arrow-right"></i> Ir al dashboard
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mb-4">
+                    <button type="submit" class="btn btn-primary" onclick="document.getElementById('submitBtn').disabled = true; this.innerHTML = '<span class=\"spinner-border spinner-border-sm me-2\" role=\"status\" aria-hidden=\"true\"></span>Guardando...'; this.form.submit();">
+                        <i class="bi bi-check-circle"></i> Guardar Cambios
+                    </button>
+                    <a href="@Url.Action("Dashboard", "Usuarios")" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Validación Bootstrap
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+
+            // Limpiar alertas después de 5 segundos
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        });
+    </script>
+}
